@@ -31,8 +31,12 @@ jobs:
           toolchain: ${{ matrix.rust }}
           target: thumbv6m-none-eabi
       - run: cargo install flip-link
-      - run: cargo build --all
-      - run: cargo build --all --release
+      # Build for Pico
+      - run: cargo build --all --target thumbv6m-none-eabi
+      - run: cargo build --all --release --target thumbv6m-none-eabi
+      # Build for WASM
+      - run: cargo build --all --target wasm32-unknown-unknown
+      - run: cargo build --all --release --target wasm32-unknown-unknown
   linting:
     name: Linting
     runs-on: ubuntu-latest
