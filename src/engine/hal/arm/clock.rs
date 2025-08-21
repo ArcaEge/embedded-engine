@@ -1,4 +1,4 @@
-use crate::engine::peripherals::PeripheralBundle;
+use super::hal::HAL;
 use bsp::hal::{
     Clock as _,
     clocks::{ClocksManager, init_clocks_and_plls},
@@ -17,35 +17,25 @@ pub struct Clock {
 
 impl Clock {
     // Constructor for clock
-    pub fn new(peripheral_bundle: &mut PeripheralBundle) -> Self {
-        let mut watchdog = Watchdog::new(
-            peripheral_bundle
-                .watchdog
-                .take()
-                .expect("watchdog already taken"),
-        );
+    pub fn new(
+        watchdog: pac::WATCHDOG,
+        xosc: pac::XOSC,
+        clocks: pac::CLOCKS,
+        pll_sys: pac::PLL_SYS,
+        pll_usb: pac::PLL_USB,
+        resets: &mut pac::RESETS,
+    ) -> Self {
+        let mut watchdog = Watchdog::new(watchdog);
         let core = pac::CorePeripherals::take().unwrap();
 
         // Initialise clocks and PLLs
         let clocks_manager = init_clocks_and_plls(
             EXTERNAL_OSCILLATOR_FREQ_HZ,
-            peripheral_bundle.xosc.take().expect("xosc already taken"),
-            peripheral_bundle
-                .clocks
-                .take()
-                .expect("clocks already taken"),
-            peripheral_bundle
-                .pll_sys
-                .take()
-                .expect("pll_sys already taken"),
-            peripheral_bundle
-                .pll_usb
-                .take()
-                .expect("pll_usb already taken"),
-            &mut peripheral_bundle
-                .resets
-                .as_mut()
-                .expect("resets already taken"),
+            xosc,
+            clocks,
+            pll_sys,
+            pll_usb,
+            resets,
             &mut watchdog,
         )
         .ok()
@@ -69,3 +59,5 @@ impl Clock {
         self.delay.delay_us(us);
     }
 }
+
+impl HAL {}

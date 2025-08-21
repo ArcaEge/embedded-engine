@@ -1,14 +1,16 @@
-pub mod clock;
-pub mod display;
-pub mod inputs;
-mod peripherals;
+mod hal;
+use defmt::info;
+use hal::HAL;
 
+// Game engine
 pub struct Engine {}
 
 impl Engine {
     pub fn new() -> Self {
-        let mut peripheral_bundle = peripherals::PeripheralBundle::new();
-        let clock = clock::Clock::new(&mut peripheral_bundle);
+        let mut hal = HAL::new();
+        info!("{}", hal.micros());
+        hal.delay_ms(50);
+        info!("{}", hal.micros());
         Self {}
     }
 }

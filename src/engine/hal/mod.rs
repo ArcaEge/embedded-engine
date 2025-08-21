@@ -1,9 +1,9 @@
 #[cfg(target_arch = "arm")]
-pub mod arm;
+mod arm;
 #[cfg(target_arch = "arm")]
 pub use arm::*;
 
 #[cfg(target_arch = "wasm32")]
-pub mod wasm;
+pub mod wasm32;
 #[cfg(target_arch = "wasm32")]
-pub use wasm::*;
+pub use wasm32::*;
