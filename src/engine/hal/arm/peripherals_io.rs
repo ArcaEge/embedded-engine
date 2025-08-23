@@ -13,7 +13,7 @@ use rp_pico as bsp;
 
 const EXTERNAL_OSCILLATOR_FREQ_HZ: u32 = 12_000_000u32;
 
-type I2CType = I2C<
+pub(super) type I2CType = I2C<
     pac::I2C0,
     (
         Pin<gpio::bank0::Gpio4, gpio::FunctionI2c, gpio::PullUp>,
@@ -24,7 +24,7 @@ type I2CType = I2C<
 // Peripherals, I/O, clock
 pub(super) struct PeripheralsIO {
     timer: pac::TIMER,
-    i2c: I2CType,
+    pub(super) i2c: Option<I2CType>,
     delay: Delay,
 }
 
@@ -63,16 +63,21 @@ impl PeripheralsIO {
         let sda_pin: Pin<_, FunctionI2C, _> = pins.gpio4.reconfigure();
         let scl_pin: Pin<_, FunctionI2C, _> = pins.gpio5.reconfigure();
 
+        // Initialise I2C itself
         let i2c: I2CType = I2C::i2c0(
             board_peripherals.I2C0,
             sda_pin,
             scl_pin,
-            400.kHz(),
+            1.MHz(), // Using 1MHz, because why not? Somewhat overkill but seems to handle it just fine up to 3MHz
             &mut board_peripherals.RESETS,
             &clocks_manager.system_clock,
         );
 
-        Self { delay, i2c, timer }
+        Self {
+            delay,
+            i2c: Some(i2c),
+            timer,
+        }
     }
 
     // Returns the number of microseconds since boot

@@ -20,6 +20,8 @@ once_cell = { version = "1.21.3", default-features = false, features = [
     "critical-section",
 ] }
 critical-section = "1.2"
+embedded-alloc = { version = "0.6", features = ["tlsf"] }
+bytemuck = "1.23.2"
 
 # WASM DEPENDENCIES
 [target.'cfg(target_arch = "wasm32")'.dependencies]
