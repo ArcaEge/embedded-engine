@@ -1,7 +1,12 @@
 mod display;
 mod hal;
 
+#[cfg(target_arch = "arm")]
 use defmt::debug;
+
+#[cfg(target_arch = "wasm32")]
+use log::debug;
+
 use display::{Buffer, DISPLAY_HEIGHT, DISPLAY_PAGE_COUNT, DISPLAY_WIDTH, FrameBuffer};
 use hal::HAL;
 
@@ -10,9 +15,7 @@ pub trait GameTrait {
     fn new() -> Self;
 
     // Runs once when start() is called
-    fn init(&mut self, engine: &mut EngineInteractionLayer) {
-        engine;
-    }
+    fn init(&mut self, engine: &mut EngineInteractionLayer);
 
     // Runs on every tick
     fn tick(&mut self, tick_count: u64, engine: &mut EngineInteractionLayer);

@@ -7,6 +7,8 @@ impl GameTrait for Game {
         Self {}
     }
 
+    fn init(&mut self, engine: &mut EngineInteractionLayer) {}
+
     fn tick(&mut self, tick_count: u64, engine: &mut EngineInteractionLayer) {
         engine.set_pixel_state(
             tick_count as usize % 128,

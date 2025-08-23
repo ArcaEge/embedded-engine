@@ -4,20 +4,13 @@
 
 // ARM only
 #[cfg(target_arch = "arm")]
-use {
-    bsp::entry, defmt::*, defmt_rtt as _, embedded_alloc::TlsfHeap as Heap,
-    embedded_hal::digital::OutputPin, panic_probe as _, rp_pico as bsp,
-};
+use {defmt::*, defmt_rtt as _, embedded_alloc::TlsfHeap as Heap, panic_probe as _};
 #[cfg(target_arch = "arm")]
 extern crate alloc;
 
 // WASM only
 #[cfg(target_arch = "wasm32")]
-use {
-    log::{debug, info},
-    std::{thread, time::Duration},
-    wasm_bindgen::prelude::*,
-};
+use wasm_bindgen::prelude::*;
 
 mod engine;
 mod game;
@@ -34,8 +27,7 @@ const HEAP_SIZE: usize = 65536; // 64 KiB
 
 // Pico main
 #[cfg(target_arch = "arm")]
-#[entry]
-fn main() -> ! {
+pub fn pico_main() -> ! {
     debug!("Program start");
 
     // Set up heap
@@ -50,18 +42,18 @@ fn main() -> ! {
 
 // WASM main
 #[cfg(target_arch = "wasm32")]
-#[wasm_bindgen(start)]
+#[wasm_bindgen]
 pub fn wasm_main() {
+    use log::info;
+
     console_log::init_with_level(log::Level::Info).unwrap();
 
-    info!("hello world!");
+    info!("Hello world!");
+
+    // common_main();   // Commented out as delays don't work yet and doing what amounts to a loop {} in the main thread isn't the best idea
 }
 
 fn common_main() -> ! {
     let mut engine: Engine<Game> = Engine::new();
     engine.start(60.0); // 60 ticks/second seems like an OK number
 }
-
-// Make cargo shut up about not having a main (workaround because we're using bin instead of lib for package type)
-#[cfg(target_arch = "wasm32")]
-fn main() {}

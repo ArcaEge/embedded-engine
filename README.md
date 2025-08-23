@@ -4,8 +4,16 @@ A Rust-based basic pixel game engine that can compile to both WASM and to bare m
 
 ## Build/run
 
+### Pico
+
+```bash
+cargo rp2040
+```
+
 ### WASM
 
 ```bash
-cargo run --target wasm32-unknown-unknown
+cd ./www/
+npm install
+npm run start
 ```
