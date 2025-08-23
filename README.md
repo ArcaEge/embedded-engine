@@ -14,6 +14,7 @@ Features (not yet implemented):
   - Collisions
 - 3D??
 - Async on the RP2040 side
+- Loading games from SD card??
 
 ## Build/run
 

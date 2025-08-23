@@ -157,6 +157,8 @@ impl<T: GameTrait> Engine<T> {
     }
 
     fn process_inputs(&mut self, current_tick: u64) {
+        self.hal.update_inputs();
+
         let inputs_state = self.hal.inputs.borrow().clone();
 
         // This is probably the worst possible way of going about this but oh well

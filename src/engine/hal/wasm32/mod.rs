@@ -89,6 +89,9 @@ impl HAL {
         }
     }
 
+    // No-op, just here because the pico HAL needs it
+    pub fn update_inputs(&mut self) {}
+
     // Calculate integer scaling factor (for responsiveness so that it isn't absolutely massive on small screens)
     fn calculate_scaling_factor() -> u32 {
         let window_height = window().unwrap().inner_height().unwrap().as_f64().unwrap() as u32;

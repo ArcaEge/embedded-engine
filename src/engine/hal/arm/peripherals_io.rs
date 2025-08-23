@@ -118,4 +118,6 @@ impl HAL {
         let current_timestamp = self.micros();
         self.delay_us((until - current_timestamp) as u32);
     }
+
+    pub fn update_inputs(&mut self) {}
 }
