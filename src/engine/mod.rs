@@ -11,7 +11,7 @@ use log::debug;
 use wasm_bindgen_futures::spawn_local;
 
 #[allow(unused)]
-use display::{DISPLAY_HEIGHT, DISPLAY_PAGE_COUNT, DISPLAY_WIDTH, FrameBuffer};
+pub use display::{DISPLAY_HEIGHT, DISPLAY_PAGE_COUNT, DISPLAY_WIDTH, FrameBuffer};
 use hal::HAL;
 
 pub trait GameTrait {
