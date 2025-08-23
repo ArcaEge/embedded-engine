@@ -32,9 +32,16 @@ bytemuck = "1.23.2"
 log = "0.4"
 console_log = "1"
 wasm-bindgen = "0.2"
-web-sys = { version = "0.3", features = ["console"] }
+web-sys = { version = "0.3", features = [
+    "console",
+    "HtmlCanvasElement",
+    "CanvasRenderingContext2d",
+    "Performance",
+    "KeyboardEvent",
+] }
 wasm-bindgen-futures = "0.4.50"
 gloo-timers = { version = "0.3", features = ["futures"] }
+gloo = { version = "0.11", features = ["utils"] }
 
 [target.'cfg(target_arch = "wasm32")'.dev-dependencies]
 wasm-bindgen-test = "0.2"

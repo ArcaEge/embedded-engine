@@ -19,7 +19,7 @@ impl FrameBuffer {
     }
 
     pub(super) fn show(&self, hal: &mut HAL) {
-        hal.display_buffer(&self.buffer);
+        hal.display_buffer(&self);
     }
 
     pub(super) fn set_pixel_state(&mut self, x: usize, y: usize, state: bool) {

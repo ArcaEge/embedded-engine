@@ -1,4 +1,4 @@
-use super::super::super::{Buffer, DISPLAY_HEIGHT, DISPLAY_PAGE_COUNT, DISPLAY_WIDTH};
+use super::super::super::{DISPLAY_HEIGHT, DISPLAY_PAGE_COUNT, DISPLAY_WIDTH, FrameBuffer};
 use super::{HAL, peripherals_io};
 use bsp::hal::{I2C, i2c};
 use defmt::{debug, info};
@@ -83,8 +83,8 @@ impl Display {
         self.i2c.write(I2C_ADDRESS, &[0x80, command])
     }
 
-    fn write_buffer(&mut self, buffer: &Buffer) -> Result<(), i2c::Error> {
-        let raw_data = bytemuck::cast_slice(buffer);
+    fn write_buffer(&mut self, framebuffer: &FrameBuffer) -> Result<(), i2c::Error> {
+        let raw_data = bytemuck::cast_slice(&framebuffer.buffer);
         self.i2c_write_with_prefix(I2C_ADDRESS, 0x40, raw_data)
     }
 
@@ -101,8 +101,8 @@ impl Display {
 }
 
 impl HAL {
-    // Displays the given buffer
-    pub fn display_buffer(&mut self, buffer: &Buffer) {
-        self.display.write_buffer(buffer).unwrap();
+    // Displays the given framebuffer
+    pub fn display_buffer(&mut self, framebuffer: &FrameBuffer) {
+        self.display.write_buffer(framebuffer).unwrap();
     }
 }

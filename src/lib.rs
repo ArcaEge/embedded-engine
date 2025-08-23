@@ -37,18 +37,15 @@ pub fn pico_main() -> ! {
         unsafe { HEAP.init(&raw mut HEAP_MEM as usize, HEAP_SIZE) }
     }
 
-    common_main();
+    let engine: Engine<Game> = Engine::new();
+    engine.start(60.0); // 60 ticks/second seems like an OK number
 }
 
 // WASM main
 #[cfg(target_arch = "wasm32")]
 #[wasm_bindgen]
 pub async fn wasm_main() {
-    use log::info;
-
     console_log::init_with_level(log::Level::Info).unwrap();
-
-    info!("Hello world!");
 
     let engine: Engine<Game> = Engine::new();
     engine.start(60.0).await; // 60 ticks/second seems like an OK number
