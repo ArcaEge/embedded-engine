@@ -113,4 +113,9 @@ impl HAL {
     pub fn delay_us(self: &mut Self, us: u32) {
         self.peripherals.delay_us(us);
     }
+
+    pub fn delay_until_us(&mut self, until: u64) {
+        let current_timestamp = self.micros();
+        self.delay_us((until - current_timestamp) as u32);
+    }
 }

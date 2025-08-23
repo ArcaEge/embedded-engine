@@ -43,17 +43,13 @@ pub fn pico_main() -> ! {
 // WASM main
 #[cfg(target_arch = "wasm32")]
 #[wasm_bindgen]
-pub fn wasm_main() {
+pub async fn wasm_main() {
     use log::info;
 
     console_log::init_with_level(log::Level::Info).unwrap();
 
     info!("Hello world!");
 
-    // common_main();   // Commented out as delays don't work yet and doing what amounts to a loop {} in the main thread isn't the best idea
-}
-
-fn common_main() -> ! {
-    let mut engine: Engine<Game> = Engine::new();
-    engine.start(60.0); // 60 ticks/second seems like an OK number
+    let engine: Engine<Game> = Engine::new();
+    engine.start(60.0).await; // 60 ticks/second seems like an OK number
 }

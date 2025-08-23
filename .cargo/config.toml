@@ -33,4 +33,3 @@ DEFMT_LOG = "debug"
 
 [alias]
 rp2040 = "run --bin rp2040 --target thumbv6m-none-eabi"
-wasm = "run --bin wasm --target wasm32-unknown-unknown"

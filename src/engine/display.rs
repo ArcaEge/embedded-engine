@@ -6,7 +6,7 @@ pub const DISPLAY_PAGE_COUNT: u8 = DISPLAY_HEIGHT / 8;
 
 pub type Buffer = [[u8; DISPLAY_WIDTH as usize]; DISPLAY_PAGE_COUNT as usize];
 
-pub(super) struct FrameBuffer {
+pub struct FrameBuffer {
     pub buffer: Buffer,
 }
 
