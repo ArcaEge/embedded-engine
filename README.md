@@ -8,10 +8,10 @@ Features (working):
 
 - Compiling to both WASM and RP2040
 - Framebuffer
+- Inputs
 
 Features (not yet implemented):
 
-- Inputs
 - Sprites
   - Collisions
 - 3D??
