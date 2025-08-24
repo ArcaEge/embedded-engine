@@ -1,30 +1,25 @@
 const path = require("path");
-const CopyWebpackPlugin = require("copy-webpack-plugin");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 
 module.exports = {
-  mode: "production",
+  mode: "development",
   entry: "./index.js",
   output: {
     path: path.resolve(__dirname, "dist"),
     filename: "bundle.js",
-    publicPath: "./"
   },
   experiments: {
     asyncWebAssembly: true,
+  },
+  devServer: {
+    static: path.resolve(__dirname, "."),
+    hot: true,
+    port: 8080,
   },
   plugins: [
     new HtmlWebpackPlugin({
       template: "./index.html",
       inject: "body",
-    }),
-    new CopyWebpackPlugin({
-      patterns: [
-        // Copy the Rust WASM pkg folder
-        { from: path.resolve(__dirname, "pkg"), to: "pkg" },
-        // Copy the assets folder
-        { from: path.resolve(__dirname, "assets"), to: "assets" },
-      ],
     }),
   ],
 };
