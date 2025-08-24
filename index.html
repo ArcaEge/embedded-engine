@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>Embedded Engine Demo</title>
+</head>
+
+<body style="color: #09021d; background-color: #dddeff;">
+  <h1>Embedded Engine Demo</h1>
+  <p>Here's a simple demo bouncing pixel "game" built in the engine, it's not much of a game but it'll do as a simple
+    demo. I didn't make something overly complicated because I'd rather spend time working on the engine, not the demo.
+    I'll make a better game that demonstrates all the features of the engine in a later ship, once I add more advanced
+    features.
+  </p>
+  <canvas id="game-canvas" style="border: 2px solid gray"></canvas>
+  <noscript>This page contains wasm and js, please enable js or it won't work :(</noscript>
+  <script src="./bootstrap.js"></script>
+  <p>Use <kbd>WASD</kbd> or arrow keys to move the dot and <kbd>CTRL+Scroll</kbd> to zoom in/out.</p>
+  <p>The jitteriness is because this is a low-resolution display (128x64) and it is monochrome (ie black OR white,
+    nothing in between) so I can't do antialiasing. These are hard constraints and I can't do anything about them as
+    they're the specs of the SSD1306 display (which is what the game is displayed on if you run it on the Pico).</p>
+  <p>Here's a video of the <strong>exact same code</strong> - no modifications, just a different compile target -
+    running on the Pi Pico:
+  </p>
+  <video height="600" controls>
+    <source src="/assets/demo_on_hardware.mp4" type="video/mp4">
+  </video>
+</body>
+
+</html>

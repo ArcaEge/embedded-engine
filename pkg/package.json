@@ -1,0 +1,16 @@
+{
+  "name": "embedded-engine",
+  "type": "module",
+  "version": "0.1.0",
+  "license": "MIT OR Apache-2.0",
+  "files": [
+    "embedded_engine_bg.wasm",
+    "embedded_engine.js",
+    "embedded_engine.d.ts"
+  ],
+  "main": "embedded_engine.js",
+  "types": "embedded_engine.d.ts",
+  "sideEffects": [
+    "./snippets/*"
+  ]
+}
