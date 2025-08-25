@@ -18,6 +18,15 @@ Features (not yet implemented):
 - Async on the RP2040 side
 - Loading games from SD card??
 
+## Pinout
+
+| Pi Pico pin | Connected to |
+| ------------|--------------|
+| GPIO 4      | SSD1306: SDA |
+| GPIO 5      | SSD1306: SCL |
+| 3.3V        | SSD1306      |
+| GND         | SSD1306      |
+
 ## Build/run
 
 ### Pico
