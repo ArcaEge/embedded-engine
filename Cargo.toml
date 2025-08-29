@@ -9,6 +9,8 @@ crate-type = ["cdylib", "rlib"]
 
 # DEPENDENCIES
 [dependencies]
+variant_count = "1.2"
+iter_variants = "0.2.0"
 
 # PICO-ONLY DEPENDENCIES
 [target.'cfg(target_arch = "arm")'.dependencies]

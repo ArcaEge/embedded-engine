@@ -1,5 +1,4 @@
-use super::super::{DISPLAY_HEIGHT, DISPLAY_WIDTH, FrameBuffer, InputsState};
-use core::f32::consts::E;
+use super::super::{DISPLAY_HEIGHT, DISPLAY_WIDTH, FrameBuffer, Inputs};
 use gloo::events::EventListener;
 use gloo::utils::document;
 use gloo_timers::future::sleep;
@@ -12,9 +11,10 @@ use web_sys::window;
 pub struct HAL {
     canvas_context: web_sys::CanvasRenderingContext2d,
     scaling_factor: u32,
-    pub inputs: Rc<RefCell<InputsState>>,
+    pub inputs: Rc<RefCell<[bool; Inputs::VARIANT_COUNT]>>,
 }
 
+/// WASM hardware abstraction layer
 impl HAL {
     pub fn new() -> Self {
         let canvas = document()
@@ -35,9 +35,7 @@ impl HAL {
             .dyn_into::<web_sys::CanvasRenderingContext2d>()
             .unwrap();
 
-        let inputs = InputsState {
-            ..Default::default()
-        };
+        let inputs = [false; Inputs::VARIANT_COUNT];
 
         let mut s = Self {
             canvas_context,
@@ -51,26 +49,27 @@ impl HAL {
     }
 
     fn setup_inputs(&mut self) {
-        // Callback function, runs when
-        let keyboard_event_callback =
-            |event: &web_sys::Event, inputs: &Rc<RefCell<InputsState>>, is_keydown: bool| {
-                let keyboard_event: web_sys::KeyboardEvent = event.clone().dyn_into().unwrap();
-                match keyboard_event.code().as_str() {
-                    "KeyW" => inputs.borrow_mut().up = is_keydown,
-                    "KeyS" => inputs.borrow_mut().down = is_keydown,
-                    "KeyA" => inputs.borrow_mut().left = is_keydown,
-                    "KeyD" => inputs.borrow_mut().right = is_keydown,
+        // Callback function, runs when a keyboard event is received
+        let keyboard_event_callback = |event: &web_sys::Event,
+                                       inputs: &Rc<RefCell<[bool; Inputs::VARIANT_COUNT]>>,
+                                       is_keydown: bool| {
+            let keyboard_event: web_sys::KeyboardEvent = event.clone().dyn_into().unwrap();
+            match keyboard_event.code().as_str() {
+                "KeyW" => inputs.borrow_mut()[Inputs::Up as usize] = is_keydown,
+                "KeyS" => inputs.borrow_mut()[Inputs::Down as usize] = is_keydown,
+                "KeyA" => inputs.borrow_mut()[Inputs::Left as usize] = is_keydown,
+                "KeyD" => inputs.borrow_mut()[Inputs::Right as usize] = is_keydown,
 
-                    "ArrowUp" => inputs.borrow_mut().up = is_keydown,
-                    "ArrowDown" => inputs.borrow_mut().down = is_keydown,
-                    "ArrowLeft" => inputs.borrow_mut().left = is_keydown,
-                    "ArrowRight" => inputs.borrow_mut().right = is_keydown,
+                "ArrowUp" => inputs.borrow_mut()[Inputs::Up as usize] = is_keydown,
+                "ArrowDown" => inputs.borrow_mut()[Inputs::Down as usize] = is_keydown,
+                "ArrowLeft" => inputs.borrow_mut()[Inputs::Left as usize] = is_keydown,
+                "ArrowRight" => inputs.borrow_mut()[Inputs::Right as usize] = is_keydown,
 
-                    "Space" => inputs.borrow_mut().jump = is_keydown,
+                "Space" => inputs.borrow_mut()[Inputs::Jump as usize] = is_keydown,
 
-                    _ => {}
-                }
-            };
+                _ => {}
+            }
+        };
 
         {
             let inputs = self.inputs.clone();
@@ -113,11 +112,6 @@ impl HAL {
     pub fn micros(&self) -> u64 {
         // It's pretty janky but good enough, I don't see any other API for this
         (window().unwrap().performance().unwrap().now() * 1000.0f64) as u64
-    }
-
-    // Delay for a number of milliseconds
-    pub async fn delay_ms(self: &mut Self, ms: u32) {
-        sleep(Duration::from_millis(ms as u64)).await;
     }
 
     // Delay for a number of microseconds (converts to milliseconds, doesn't actually delay for microseconds)

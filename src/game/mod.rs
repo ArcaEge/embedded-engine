@@ -1,4 +1,4 @@
-use crate::engine::{DISPLAY_HEIGHT, DISPLAY_WIDTH, EngineInteractionLayer, GameTrait};
+use crate::engine::{DISPLAY_HEIGHT, DISPLAY_WIDTH, EngineInteractionLayer, GameTrait, Inputs};
 
 const INPUTS_ACCELERATION: f32 = 0.05;
 const MAX_VELOCITY: f32 = 1.0;
@@ -21,9 +21,9 @@ impl GameTrait for Game {
         }
     }
 
-    fn init(&mut self, engine: &mut EngineInteractionLayer) {}
+    fn init(&mut self, _engine: &mut EngineInteractionLayer) {}
 
-    fn tick(&mut self, tick_count: u64, engine: &mut EngineInteractionLayer) {
+    fn tick(&mut self, _tick_count: u64, engine: &mut EngineInteractionLayer) {
         // Check if at edge, if so bounce
         if self.position_x <= 0.0 || self.position_x >= DISPLAY_WIDTH as f32 - 2.0 {
             self.velocity_x = -self.velocity_x;
@@ -32,16 +32,16 @@ impl GameTrait for Game {
             self.velocity_y = -self.velocity_y;
         }
 
-        if engine.inputs.up.state {
+        if engine.inputs[Inputs::Up as usize].state {
             self.velocity_y -= INPUTS_ACCELERATION;
         }
-        if engine.inputs.down.state {
+        if engine.inputs[Inputs::Down as usize].state {
             self.velocity_y += INPUTS_ACCELERATION;
         }
-        if engine.inputs.left.state {
+        if engine.inputs[Inputs::Left as usize].state {
             self.velocity_x -= INPUTS_ACCELERATION;
         }
-        if engine.inputs.right.state {
+        if engine.inputs[Inputs::Right as usize].state {
             self.velocity_x += INPUTS_ACCELERATION;
         }
 

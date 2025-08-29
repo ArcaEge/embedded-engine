@@ -15,8 +15,9 @@ Features (not yet implemented):
 - Sprites
   - Collisions
 - 3D??
-- Async on the RP2040 side
+- Async on the RP2040 side?
 - Loading games from SD card??
+- Doom port (probably only for WASM because RAM limitations, but pico could work with a little optimising) - game engine in a game engine???
 
 ## Pinout
 
@@ -26,6 +27,15 @@ Features (not yet implemented):
 | GPIO 5      | SSD1306: SCL |
 | 3.3V        | SSD1306      |
 | GND         | SSD1306      |
+| GPIO 6      | Up           |
+| GPIO 7      | Down         |
+| GPIO 8      | Left         |
+| GPIO 9      | Right        |
+| GPIO 10     | Jump         |
+| GPIO 18     | Sprint       |
+| GPIO 19     | Crouch       |
+
+Connect the other leg of the buttons to ground, no need for pullup resistors as we're using the pico's internal pullups.
 
 ## Build/run
 
