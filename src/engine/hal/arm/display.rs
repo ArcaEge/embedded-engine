@@ -1,8 +1,8 @@
 use super::super::super::{DISPLAY_HEIGHT, DISPLAY_PAGE_COUNT, DISPLAY_WIDTH, FrameBuffer};
 use super::{HAL, peripherals_io};
-use bsp::hal::{I2C, i2c};
-use defmt::{debug, info};
-use embedded_hal::i2c::{I2c, Operation, SevenBitAddress};
+use bsp::hal::i2c;
+use defmt::debug;
+use embedded_hal::i2c::I2c;
 use rp_pico as bsp;
 
 const I2C_ADDRESS: u8 = 0x3C; // or 0x3D in some displays, depending on whether the D/C (Data/Command) pin is pulled HIGH or LOW
@@ -79,11 +79,24 @@ impl Display {
         s
     }
 
+    /// Write a command to the display, commands start with 0x80
     fn write_command(&mut self, command: u8) -> Result<(), i2c::Error> {
         self.i2c.write(I2C_ADDRESS, &[0x80, command])
     }
 
+    /// Write the contents of the given framebuffer
     fn write_buffer(&mut self, framebuffer: &FrameBuffer) -> Result<(), i2c::Error> {
+        // Following two sections are to prevent the display getting desynced
+        // Set column range to 0-127
+        self.write_command(DISPLAY_SET_COLUMN_ADDRESS)?;
+        self.write_command(0x00)?;
+        self.write_command(DISPLAY_WIDTH - 1)?;
+
+        // Set page range to 0-7
+        self.write_command(DISPLAY_SET_PAGE_ADDRESS)?;
+        self.write_command(0x00)?;
+        self.write_command(DISPLAY_PAGE_COUNT - 1)?;
+
         let raw_data = bytemuck::cast_slice(&framebuffer.buffer);
         self.i2c_write_with_prefix(I2C_ADDRESS, 0x40, raw_data)
     }
