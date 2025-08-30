@@ -1,4 +1,6 @@
-use crate::engine::{DISPLAY_HEIGHT, DISPLAY_WIDTH, EngineInteractionLayer, GameTrait, Inputs};
+use crate::engine::{
+    DISPLAY_HEIGHT, DISPLAY_WIDTH, EngineInteractionLayer, GameTrait, Inputs, Point, Rect,
+};
 
 const INPUTS_ACCELERATION: f32 = 0.05;
 const MAX_VELOCITY: f32 = 1.0;
@@ -54,27 +56,15 @@ impl GameTrait for Game {
         self.velocity_x = self.velocity_x.clamp(-MAX_VELOCITY, MAX_VELOCITY);
         self.velocity_y = self.velocity_y.clamp(-MAX_VELOCITY, MAX_VELOCITY);
 
-        let _ = engine.set_pixel_state_check_bounds(
-            self.position_x as i32,
-            self.position_y as i32,
-            true,
-        );
-
-        let _ = engine.set_pixel_state_check_bounds(
-            self.position_x as i32 + 1,
-            self.position_y as i32,
-            true,
-        );
-
-        let _ = engine.set_pixel_state_check_bounds(
-            self.position_x as i32,
-            self.position_y as i32 + 1,
-            true,
-        );
-
-        let _ = engine.set_pixel_state_check_bounds(
-            self.position_x as i32 + 1,
-            self.position_y as i32 + 1,
+        let _ = engine.draw_rect(
+            Rect {
+                origin: Point {
+                    x: self.position_x as i32 - 24,
+                    y: self.position_y as i32 - 24,
+                },
+                width: 128,
+                height: 64,
+            },
             true,
         );
     }

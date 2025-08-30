@@ -46,9 +46,12 @@ impl FrameBuffer {
         (self.buffer[page_no as usize][x as usize] & bitmask) > 0
     }
 
+    /// Clear the framebuffer
     pub(super) fn clear(&mut self) {
         self.buffer = [[0x00; DISPLAY_WIDTH as usize]; DISPLAY_PAGE_COUNT as usize];
     }
+
+    // TODO: invert framebuffer
 
     fn get_pixel_page_no(y: u32) -> u32 {
         y / 8 // Each page is 8 pixels tall
