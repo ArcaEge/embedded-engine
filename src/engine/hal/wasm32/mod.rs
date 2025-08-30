@@ -129,7 +129,11 @@ impl HAL {
 
     pub fn display_buffer(&mut self, framebuffer: &FrameBuffer) {
         // Here's a hack that'll probably save one or two CPU cycles:
-        let states = ["#09021d", "#dddeff"];
+        let states = if framebuffer.inverted {
+            ["#dddeff", "#09021d"]
+        } else {
+            ["#09021d", "#dddeff"]
+        };
 
         for x in 0..DISPLAY_WIDTH as u32 {
             for y in 0..DISPLAY_HEIGHT as u32 {

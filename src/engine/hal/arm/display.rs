@@ -59,7 +59,7 @@ impl Display {
         s.write_command(0x80).unwrap();
 
         s.write_command(DISPLAY_SET_PRECHARGE).unwrap();
-        s.write_command(0xF1).unwrap();
+        s.write_command(0x80).unwrap();
 
         s.write_command(DISPLAY_SET_VCOM_DESELECT).unwrap();
         s.write_command(0x30).unwrap();
@@ -96,6 +96,10 @@ impl Display {
         self.write_command(DISPLAY_SET_PAGE_ADDRESS)?;
         self.write_command(0x00)?;
         self.write_command(DISPLAY_PAGE_COUNT - 1)?;
+
+        // Set inverted state
+        self.write_command(DISPLAY_INVERTED_STATE | framebuffer.inverted as u8)
+            .unwrap();
 
         let raw_data = bytemuck::cast_slice(&framebuffer.buffer);
         self.i2c_write_with_prefix(I2C_ADDRESS, 0x40, raw_data)

@@ -23,9 +23,14 @@ impl GameTrait for Game {
         }
     }
 
-    fn init(&mut self, _engine: &mut EngineInteractionLayer) {}
+    fn init(&mut self, engine: &mut EngineInteractionLayer) {
+        engine.framebuffer.inverted = true;
+    }
 
     fn tick(&mut self, _tick_count: u64, engine: &mut EngineInteractionLayer) {
+        // epilepsy inducer
+        // engine.framebuffer.inverted = !engine.framebuffer.inverted;
+
         // Check if at edge, if so bounce
         if self.position_x <= 0.0 || self.position_x >= DISPLAY_WIDTH as f32 - 2.0 {
             self.velocity_x = -self.velocity_x;

@@ -11,14 +11,16 @@ pub type Buffer = [[u8; DISPLAY_WIDTH as usize]; DISPLAY_PAGE_COUNT as usize];
 
 pub struct FrameBuffer {
     pub buffer: Buffer,
+    pub inverted: bool,
 }
 
 impl FrameBuffer {
     pub fn new() -> Self {
         // Initialise empty buffer
         let buffer = [[0x00; DISPLAY_WIDTH as usize]; DISPLAY_PAGE_COUNT as usize];
+        let inverted = false;
 
-        Self { buffer }
+        Self { buffer, inverted }
     }
 
     pub(super) fn show(&self, hal: &mut HAL) {
@@ -50,8 +52,6 @@ impl FrameBuffer {
     pub(super) fn clear(&mut self) {
         self.buffer = [[0x00; DISPLAY_WIDTH as usize]; DISPLAY_PAGE_COUNT as usize];
     }
-
-    // TODO: invert framebuffer
 
     fn get_pixel_page_no(y: u32) -> u32 {
         y / 8 // Each page is 8 pixels tall
