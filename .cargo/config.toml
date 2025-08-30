@@ -27,6 +27,7 @@ rustflags = [
 [build]
 # target = "thumbv6m-none-eabi"
 target = "wasm32-unknown-unknown"
+rustdocflags = ["--default-theme=ayu"] # because ayu is 1000% the best theme
 
 [env]
 DEFMT_LOG = "debug"

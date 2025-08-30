@@ -1,6 +1,7 @@
 mod display;
 mod hal;
 mod interaction_layer;
+mod types;
 
 #[cfg(target_arch = "arm")]
 use defmt::debug;
@@ -15,21 +16,10 @@ use wasm_bindgen_futures::spawn_local;
 pub use display::{DISPLAY_HEIGHT, DISPLAY_PAGE_COUNT, DISPLAY_WIDTH, FrameBuffer};
 
 pub use interaction_layer::EngineInteractionLayer;
+pub use types::*;
 
 use hal::HAL;
 use iter_variants::IterVariants;
-use variant_count::VariantCount;
-
-pub trait GameTrait {
-    /// Runs on Engine::new()
-    fn new() -> Self;
-
-    /// Runs once when start() is called
-    fn init(&mut self, engine: &mut EngineInteractionLayer);
-
-    /// Runs on every tick
-    fn tick(&mut self, tick_count: u64, engine: &mut EngineInteractionLayer);
-}
 
 /// Game engine, responsible for initialisation, ticks, rendering, input processing
 pub struct Engine<T: GameTrait> {
@@ -159,33 +149,4 @@ impl<T: GameTrait> Engine<T> {
             }
         }
     }
-}
-
-#[derive(Clone, Copy)]
-pub struct Input {
-    pub state: bool,
-    pub pressed_tick: Option<u64>,
-    pub released_tick: Option<u64>,
-}
-
-/// A single input
-impl Input {
-    pub fn new() -> Self {
-        Self {
-            state: false,
-            pressed_tick: None,
-            released_tick: None,
-        }
-    }
-}
-
-/// A less stupid way of doing inputs (I think?), helps avoid code duplication
-#[repr(usize)]
-#[derive(VariantCount, IterVariants, Clone, Copy)]
-pub enum Inputs {
-    Up,
-    Down,
-    Left,
-    Right,
-    Jump,
 }

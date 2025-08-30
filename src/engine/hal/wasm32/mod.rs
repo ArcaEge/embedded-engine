@@ -131,8 +131,8 @@ impl HAL {
         // Here's a hack that'll probably save one or two CPU cycles:
         let states = ["#09021d", "#dddeff"];
 
-        for x in 0..DISPLAY_WIDTH as usize {
-            for y in 0..DISPLAY_HEIGHT as usize {
+        for x in 0..DISPLAY_WIDTH as u32 {
+            for y in 0..DISPLAY_HEIGHT as u32 {
                 let state = framebuffer.get_pixel_state(x, y);
 
                 // Here's the other half of the hack:

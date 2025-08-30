@@ -9,7 +9,7 @@ pub struct EngineInteractionLayer<'a> {
 }
 
 impl<'a> EngineInteractionLayer<'a> {
-    pub fn set_pixel_state(&mut self, x: usize, y: usize, state: bool) {
+    pub fn set_pixel_state(&mut self, x: u32, y: u32, state: bool) {
         self.framebuffer.set_pixel_state(x, y, state);
     }
 
@@ -18,12 +18,11 @@ impl<'a> EngineInteractionLayer<'a> {
             return Err(());
         }
 
-        self.framebuffer
-            .set_pixel_state(x as usize, y as usize, state);
+        self.framebuffer.set_pixel_state(x as u32, y as u32, state);
         Ok(())
     }
 
-    pub fn get_pixel_state(&self, x: usize, y: usize) {
+    pub fn get_pixel_state(&self, x: u32, y: u32) {
         self.framebuffer.get_pixel_state(x, y);
     }
 }
