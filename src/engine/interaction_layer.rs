@@ -1,6 +1,4 @@
-use crate::{CornerRect, Rect};
-
-use super::{DISPLAY_HEIGHT, DISPLAY_WIDTH, FrameBuffer, HAL, Input, Inputs};
+use super::*;
 
 /// Engine interaction layer (i.e. the functions the game can call and the objects it can access to interact with the engine)
 #[allow(dead_code)]
@@ -59,6 +57,56 @@ impl<'a> EngineInteractionLayer<'a> {
                 }
 
                 self.set_pixel_state(x as u32, y as u32, state);
+            }
+        }
+    }
+
+    /// Draw a sprite
+    /// * `sprite` - The Sprite to draw
+    /// * `location` - Where to draw it
+    /// * `draw_white` - Draw white pixels
+    /// * `draw_black` - Draw black pixels
+    pub fn draw_sprite(
+        &mut self,
+        sprite: &Sprite,
+        location: Point,
+        draw_white: bool,
+        draw_black: bool,
+    ) {
+        let bottom_right_exclusive = Point {
+            x: location.x + sprite.width as i32,
+            y: location.y + sprite.height as i32,
+        };
+
+        for y in location.y..bottom_right_exclusive.y {
+            // More efficient bounds checking
+            if y < 0 {
+                continue;
+            } else if y >= DISPLAY_HEIGHT as i32 {
+                break;
+            }
+
+            for x in location.x..bottom_right_exclusive.x {
+                // More efficient bounds checking
+                if x < 0 {
+                    continue;
+                } else if x >= DISPLAY_WIDTH as i32 {
+                    break;
+                }
+
+                match sprite.get_pixel((x - location.x) as u32, (y - location.y) as u32) {
+                    SpritePixel::Black => {
+                        if draw_black {
+                            self.set_pixel_state(x as u32, y as u32, false);
+                        }
+                    }
+                    SpritePixel::White => {
+                        if draw_white {
+                            self.set_pixel_state(x as u32, y as u32, true);
+                        }
+                    }
+                    SpritePixel::Transparent => {} // Do nothing
+                }
             }
         }
     }

@@ -11,6 +11,9 @@ pub trait GameTrait {
 
     /// Runs on every tick
     fn tick(&mut self, tick_count: u64, engine: &mut EngineInteractionLayer);
+
+    /// Runs after every tick, used to render graphics onto the framebuffer
+    fn render(&mut self, tick_count: u64, engine: &mut EngineInteractionLayer);
 }
 
 #[derive(Clone, Copy)]
@@ -85,4 +88,39 @@ impl CornerRect {
             },
         }
     }
+}
+
+/// Sprite
+/// TODO: Make this more memory efficient (SpritePixels only need 2 bits of memory but currently use 8)
+pub struct Sprite {
+    pub pixels: &'static [SpritePixel],
+    pub width: u32,
+    pub height: u32,
+}
+
+impl Sprite {
+    /// Returns the pixel at the given coordinates
+    pub fn get_pixel(&self, x: u32, y: u32) -> SpritePixel {
+        self.pixels[(y * self.width + x) as usize]
+    }
+
+    /// Render the sprite
+    pub fn render(
+        &self,
+        location: Point,
+        engine: &mut EngineInteractionLayer,
+        draw_white: bool,
+        draw_black: bool,
+    ) {
+        engine.draw_sprite(self, location, draw_white, draw_black);
+    }
+}
+
+/// Pixel of a sprite, Black, White or Transparent
+#[repr(u8)]
+#[derive(Clone, Copy)]
+pub enum SpritePixel {
+    Black = 0,
+    White = 1,
+    Transparent = 2,
 }

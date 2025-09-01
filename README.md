@@ -52,3 +52,10 @@ cd ./www/
 npm install
 npm run start
 ```
+
+## Assets to use
+
+- <https://emerald-fish.itch.io/1bit-slime-platformer>
+- <https://pixelhole.itch.io/8x8dungeontilemap>
+- 16x16, might work less well: <https://kenney-assets.itch.io/1-bit-platformer-pack>
+- <https://thebuffed.itch.io/tiny-8x8-dungeon>

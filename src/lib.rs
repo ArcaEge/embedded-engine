@@ -8,6 +8,7 @@
 // ARM only
 #[cfg(target_arch = "arm")]
 use {defmt::*, defmt_rtt as _, embedded_alloc::TlsfHeap as Heap, panic_probe as _};
+
 #[cfg(target_arch = "arm")]
 extern crate alloc;
 
@@ -15,11 +16,10 @@ extern crate alloc;
 #[cfg(target_arch = "wasm32")]
 use wasm_bindgen::prelude::*;
 
-mod engine;
-mod game;
+// Import the entire engine and game for rustdoc purposes
+pub mod engine;
+pub mod game;
 
-// Import the entire engine for rustdoc purposes
-pub use engine::*;
 use game::Game;
 
 /// Tick rate of the engine
@@ -49,7 +49,7 @@ pub fn pico_main() -> ! {
         unsafe { HEAP.init(&raw mut HEAP_MEM as usize, HEAP_SIZE) }
     }
 
-    let engine: Engine<Game> = Engine::new();
+    let engine: engine::Engine<Game> = engine::Engine::new();
     engine.start(TICK_RATE);
 }
 
@@ -60,6 +60,6 @@ pub fn pico_main() -> ! {
 pub async fn wasm_main() {
     console_log::init_with_level(log::Level::Info).unwrap();
 
-    let engine: Engine<Game> = Engine::new();
+    let engine: engine::Engine<Game> = engine::Engine::new();
     engine.start(TICK_RATE).await;
 }

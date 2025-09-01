@@ -1,76 +1,46 @@
-use crate::engine::{
-    DISPLAY_HEIGHT, DISPLAY_WIDTH, EngineInteractionLayer, GameTrait, Inputs, Point, Rect,
-};
+mod actors;
+mod sprites;
+pub mod world_actor_abstractions;
+mod worlds;
 
-const INPUTS_ACCELERATION: f32 = 0.05;
-const MAX_VELOCITY: f32 = 1.0;
+use crate::engine::{alloc::Box, *};
+pub use world_actor_abstractions::*;
 
 // Game stuff goes here
 pub struct Game {
-    velocity_x: f32,
-    velocity_y: f32,
-    position_x: f32,
-    position_y: f32,
+    world: Box<dyn WorldTrait>,
 }
 
 impl GameTrait for Game {
     fn new() -> Self {
         Self {
-            velocity_x: 0.9,
-            velocity_y: -0.5,
-            position_x: 60.0,
-            position_y: 30.0,
+            world: worlds::MainWorld::create(),
         }
     }
 
     fn init(&mut self, engine: &mut EngineInteractionLayer) {
-        engine.framebuffer.inverted = true;
+        // Currently not utilised but could be used for stuff
+        let mut interaction_layer = GameInteractionLayer {};
+
+        self.world.init(&mut interaction_layer, engine);
     }
 
-    fn tick(&mut self, _tick_count: u64, engine: &mut EngineInteractionLayer) {
+    fn tick(&mut self, tick_count: u64, engine: &mut EngineInteractionLayer) {
+        let mut interaction_layer = GameInteractionLayer {};
+
+        self.world
+            .as_mut()
+            .render(tick_count, &mut interaction_layer, engine);
+    }
+
+    fn render(&mut self, tick_count: u64, engine: &mut EngineInteractionLayer) {
         // epilepsy inducer
         // engine.framebuffer.inverted = !engine.framebuffer.inverted;
 
-        // Check if at edge, if so bounce
-        if self.position_x <= 0.0 || self.position_x >= DISPLAY_WIDTH as f32 - 2.0 {
-            self.velocity_x = -self.velocity_x;
-        }
-        if self.position_y <= 0.0 || self.position_y >= DISPLAY_HEIGHT as f32 - 2.0 {
-            self.velocity_y = -self.velocity_y;
-        }
+        let mut interaction_layer = GameInteractionLayer {};
 
-        if engine.inputs[Inputs::Up as usize].state {
-            self.velocity_y -= INPUTS_ACCELERATION;
-        }
-        if engine.inputs[Inputs::Down as usize].state {
-            self.velocity_y += INPUTS_ACCELERATION;
-        }
-        if engine.inputs[Inputs::Left as usize].state {
-            self.velocity_x -= INPUTS_ACCELERATION;
-        }
-        if engine.inputs[Inputs::Right as usize].state {
-            self.velocity_x += INPUTS_ACCELERATION;
-        }
-
-        self.position_x += self.velocity_x;
-        self.position_y += self.velocity_y;
-
-        self.position_x = self.position_x.clamp(0.0, DISPLAY_WIDTH as f32 - 2.0);
-        self.position_y = self.position_y.clamp(0.0, DISPLAY_HEIGHT as f32 - 2.0);
-
-        self.velocity_x = self.velocity_x.clamp(-MAX_VELOCITY, MAX_VELOCITY);
-        self.velocity_y = self.velocity_y.clamp(-MAX_VELOCITY, MAX_VELOCITY);
-
-        let _ = engine.draw_rect(
-            Rect {
-                origin: Point {
-                    x: self.position_x as i32 - 24,
-                    y: self.position_y as i32 - 24,
-                },
-                width: 128,
-                height: 64,
-            },
-            true,
-        );
+        self.world
+            .as_mut()
+            .render(tick_count, &mut interaction_layer, engine);
     }
 }

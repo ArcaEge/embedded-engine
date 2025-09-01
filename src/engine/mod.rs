@@ -1,3 +1,4 @@
+pub mod alloc;
 mod display;
 mod hal;
 mod interaction_layer;
