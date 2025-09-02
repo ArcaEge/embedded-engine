@@ -9,15 +9,18 @@ Features (working):
 - Compiling to both WASM and RP2040
 - Framebuffer
 - Inputs
+- Sprites
+- Actor-World system
 
 Features (not yet implemented):
 
-- Sprites
-  - Collisions
+- Collisions
 - 3D??
 - Async on the RP2040 side?
 - Loading games from SD card??
 - Doom port (probably only for WASM because RAM limitations, but pico could work with a little optimising) - game engine in a game engine???
+
+? = Maybe, I'll do it if I find time
 
 ## Pinout
 
