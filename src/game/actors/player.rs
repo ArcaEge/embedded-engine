@@ -1,8 +1,7 @@
-use super::super::sprites::player_sprite;
 use super::super::world_actor_abstractions::{
     ActorTrait, GameInteractionLayer, WorldInteractionLayer,
 };
-use crate::engine::{EngineInteractionLayer, Point, Sprite, alloc::Rc};
+use crate::engine::{EngineInteractionLayer, Point, Sprite, Spritesheet, alloc::Rc};
 
 /// The player
 pub struct Player {
@@ -11,10 +10,14 @@ pub struct Player {
 }
 
 impl Player {
-    pub fn new(location: Point) -> Self {
+    pub fn create(location: Point, spritesheet: &Spritesheet) -> Self {
         Self {
             location,
-            sprite: Rc::from(player_sprite()),
+            sprite: spritesheet
+                .sprites
+                .get(0)
+                .expect("Failed to get sprite 0")
+                .clone(),
         }
     }
 }

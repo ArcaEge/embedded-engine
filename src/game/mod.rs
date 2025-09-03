@@ -5,29 +5,40 @@ pub mod world_actor_abstractions;
 mod worlds;
 
 use crate::engine::{alloc::Box, *};
+use postcard::from_bytes;
 pub use world_actor_abstractions::*;
 
 // Game stuff goes here
 pub struct Game {
     world: Box<dyn WorldTrait>,
+    spritesheet: Spritesheet,
 }
 
 impl GameTrait for Game {
     fn new() -> Self {
+        let spritesheet_bytes = include_bytes!("sprites/spritesheet.embsprite");
+        let spritesheet_initial: SpritesheetInitial = from_bytes(spritesheet_bytes)
+            .expect("Failed to parse spritesheet file, invalid format");
+        let spritesheet = Spritesheet::from(spritesheet_initial);
         Self {
-            world: worlds::MainWorld::create(),
+            world: worlds::MainWorld::create(&spritesheet),
+            spritesheet,
         }
     }
 
     fn init(&mut self, engine: &mut EngineInteractionLayer) {
         // Currently not utilised but could be used for stuff
-        let mut interaction_layer = GameInteractionLayer {};
+        let mut interaction_layer = GameInteractionLayer {
+            spritesheet: &self.spritesheet,
+        };
 
         self.world.init(&mut interaction_layer, engine);
     }
 
     fn tick(&mut self, tick_count: u64, engine: &mut EngineInteractionLayer) {
-        let mut interaction_layer = GameInteractionLayer {};
+        let mut interaction_layer = GameInteractionLayer {
+            spritesheet: &self.spritesheet,
+        };
 
         self.world
             .as_mut()
@@ -38,7 +49,9 @@ impl GameTrait for Game {
         // epilepsy inducer
         // engine.framebuffer.inverted = !engine.framebuffer.inverted;
 
-        let mut interaction_layer = GameInteractionLayer {};
+        let mut interaction_layer = GameInteractionLayer {
+            spritesheet: &self.spritesheet,
+        };
 
         self.world
             .as_mut()

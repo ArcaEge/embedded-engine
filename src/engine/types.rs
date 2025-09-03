@@ -1,7 +1,6 @@
 use super::EngineInteractionLayer;
 use super::alloc::{Rc, Vec};
 use iter_variants::IterVariants;
-use postcard::to_vec;
 use serde::{Deserialize, Serialize};
 use variant_count::VariantCount;
 
@@ -140,12 +139,14 @@ impl Sprite {
 }
 
 /// A single frame of an animation
+/// TODO: implement this
 pub struct SpriteAnimationFrame {
     sprite: Rc<Sprite>,
     length_ticks: u64,
 }
 
 /// An entire animation
+/// TODO: implement this asw
 pub struct SpriteAnimation {
     sprites: Vec<SpriteAnimationFrame>,
     length_ticks_total: u64,

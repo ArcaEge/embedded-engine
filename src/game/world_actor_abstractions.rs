@@ -1,7 +1,7 @@
 use core::fmt::Error;
 
 use crate::engine::{
-    EngineInteractionLayer, Point, Sprite,
+    EngineInteractionLayer, Point, Sprite, Spritesheet,
     alloc::{Box, Vec},
     sound_player::SoundPlayer,
 };
@@ -64,7 +64,7 @@ pub trait WorldTrait {
 
 /// Gives the World a create() function, used for keeping the core WorldTrait dyn compatible
 pub trait ConstructableWorld {
-    fn create() -> Box<dyn WorldTrait>;
+    fn create(spritesheet: &Spritesheet) -> Box<dyn WorldTrait>;
 }
 
 /// Actor = object in the game
@@ -109,11 +109,13 @@ pub trait ActorTrait {
 
 /// Gives the Actor a create() function, used for keeping the core ActorTrait dyn compatible
 pub trait ConstructableActor {
-    fn create() -> Box<dyn ActorTrait>;
+    fn create(location: Point, spritesheet: &Spritesheet) -> Box<dyn ActorTrait>;
 }
 
 /// Interaction layer used to pass data between the world and game
-pub struct GameInteractionLayer {}
+pub struct GameInteractionLayer<'a> {
+    pub spritesheet: &'a Spritesheet,
+}
 
 /// Interaction layer used to pass data between the actor and world
 pub struct WorldInteractionLayer<'a> {

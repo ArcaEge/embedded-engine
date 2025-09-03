@@ -13,15 +13,17 @@ Features (working):
 - Actor-World system
 - Sound
   - Sound player
+- Spritesheet support (see [ArcaEge/embedded-encoder](https://github.com/ArcaEge/embedded-encoder), this is the accompanying spritesheet encoder - currently a WIP)
 
 Features (not yet implemented):
 
-- Sound on WASM
+- Sound from encoded file
 - Collisions
+- Demo game
 - 3D??
 - Async on the RP2040 side?
 - Loading games from SD card??
-- Doom port (probably only for WASM because RAM limitations, but pico could work with a little optimising) - game engine in a game engine???
+- Doom port (probably only for WASM because RAM limitations, but pico could work with a little optimising perhaps) - game engine in a game engine???
 
 ? = Maybe, I'll do it if I find time
 

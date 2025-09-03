@@ -4,7 +4,7 @@ use super::super::world_actor_abstractions::{
 };
 use crate::{
     engine::{
-        EngineInteractionLayer, Point,
+        EngineInteractionLayer, Point, Spritesheet,
         alloc::{Box, Vec},
         sound_player::SoundPlayer,
     },
@@ -21,10 +21,10 @@ pub struct MainWorld {
 }
 
 impl ConstructableWorld for MainWorld {
-    fn create() -> Box<dyn WorldTrait> {
+    fn create(spritesheet: &Spritesheet) -> Box<dyn WorldTrait> {
         Box::new(Self {
             actors: Vec::new(),
-            player: Player::new(Point { x: 5, y: 5 }),
+            player: Player::create(Point { x: 5, y: 5 }, spritesheet),
             music: Vec::new(),
             sfx: Vec::new(),
             current_music: None,
