@@ -6,12 +6,13 @@ use std::cell::RefCell;
 use std::rc::Rc;
 use std::time::Duration;
 use wasm_bindgen::JsCast;
-use web_sys::window;
+use web_sys::{AudioContext, OscillatorNode, OscillatorType, window};
 
 pub struct HAL {
     canvas_context: web_sys::CanvasRenderingContext2d,
     scaling_factor: u32,
     pub inputs: Rc<RefCell<[bool; Inputs::VARIANT_COUNT]>>,
+    oscillator: OscillatorNode,
 }
 
 /// WASM hardware abstraction layer
@@ -37,10 +38,18 @@ impl HAL {
 
         let inputs = [false; Inputs::VARIANT_COUNT];
 
+        let audio_context = AudioContext::new().unwrap();
+        let oscillator = audio_context.create_oscillator().unwrap();
+        oscillator.set_type(OscillatorType::Square);
+        oscillator
+            .connect_with_audio_node(&audio_context.destination())
+            .unwrap();
+
         let mut s = Self {
             canvas_context,
             scaling_factor,
             inputs: Rc::new(RefCell::new(inputs)),
+            oscillator,
         };
 
         s.setup_inputs();
@@ -151,5 +160,16 @@ impl HAL {
                 );
             }
         }
+    }
+
+    pub fn set_sound_freq(&mut self, freq: f32) {
+        self.oscillator.frequency().set_value(freq);
+    }
+
+    pub fn set_sound_state(&mut self, state: bool) {
+        let _ = match state {
+            true => self.oscillator.start(),
+            false => self.oscillator.stop(),
+        };
     }
 }

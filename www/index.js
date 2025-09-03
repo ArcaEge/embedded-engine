@@ -15,7 +15,9 @@ async function run() {
     // Show loading text on canvas until the wasm loads
     const canvas = document.getElementById("game-canvas");
     const ctx = canvas.getContext("2d");
+    ctx.fillStyle = "#dddeff"
     ctx.fillText("Loading web assembly, please wait...", 10, 20);
+    ctx.fillText("If this gets stuck, please try a newer browser", 10, 40);
 
     await init();
     await wasm_main();
