@@ -1,7 +1,6 @@
 use super::{EngineInteractionLayer, Sound};
 
 /// Plays sounds
-/// TODO: add repeat support
 pub struct SoundPlayer {
     sound: &'static Sound,
     current_index: u32,
