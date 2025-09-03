@@ -11,9 +11,12 @@ Features (working):
 - Inputs
 - Sprites
 - Actor-World system
+- Sound
+  - Sound player
 
 Features (not yet implemented):
 
+- Sound on WASM
 - Collisions
 - 3D??
 - Async on the RP2040 side?
@@ -37,6 +40,7 @@ Features (not yet implemented):
 | GPIO 10     | Jump         |
 | GPIO 18     | Sprint       |
 | GPIO 19     | Crouch       |
+| GPIO 20     | Piezo buzzer |
 
 Connect the other leg of the buttons to ground, no need for pullup resistors as we're using the pico's internal pullups.
 

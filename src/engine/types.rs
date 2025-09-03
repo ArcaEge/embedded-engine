@@ -93,9 +93,9 @@ impl CornerRect {
 /// Sprite
 /// TODO: Make this more memory efficient (SpritePixels only need 2 bits of memory but currently use 8)
 pub struct Sprite {
-    pub pixels: &'static [SpritePixel],
     pub width: u32,
     pub height: u32,
+    pub pixels: &'static [SpritePixel],
 }
 
 impl Sprite {
@@ -123,4 +123,13 @@ pub enum SpritePixel {
     Black = 0,
     White = 1,
     Transparent = 2,
+}
+
+/// Sound sample
+pub type Sound = &'static [SoundTone];
+
+/// Tone + length in ms
+pub struct SoundTone {
+    pub freq: f32,
+    pub length_us: u64,
 }

@@ -2,6 +2,8 @@ pub mod alloc;
 mod display;
 mod hal;
 mod interaction_layer;
+pub mod sound_player;
+pub mod tones;
 mod types;
 
 #[cfg(target_arch = "arm")]

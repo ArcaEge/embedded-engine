@@ -3,7 +3,7 @@ use super::*;
 /// Engine interaction layer (i.e. the functions the game can call and the objects it can access to interact with the engine)
 #[allow(dead_code)]
 pub struct EngineInteractionLayer<'a> {
-    pub(super) hal: &'a HAL,
+    pub(super) hal: &'a mut HAL,
     pub framebuffer: &'a mut FrameBuffer,
     pub inputs: &'a [Input; Inputs::VARIANT_COUNT],
 }
@@ -109,5 +109,30 @@ impl<'a> EngineInteractionLayer<'a> {
                 }
             }
         }
+    }
+
+    /// Sets the raw frequency of the produced sound. Also calls self.set_sound_state(true)
+    pub fn set_sound_freq(&mut self, freq: f32) {
+        if freq == 0.0 {
+            self.set_sound_state(false);
+            return;
+        }
+        self.set_sound_state(true);
+        self.hal.set_sound_freq(freq);
+    }
+
+    /// Sets the tone of the produced sound
+    pub fn set_sound_freq_from_tone(&mut self, tone: tones::Tone) {
+        self.set_sound_freq(tone.to_freq());
+    }
+
+    /// Sets the state of the sound, i.e. whether a tone is being played or not
+    pub fn set_sound_state(&mut self, state: bool) {
+        self.hal.set_sound_state(state);
+    }
+
+    /// Get the current timestamp in microseconds
+    pub fn micros(&self) -> u64 {
+        self.hal.micros()
     }
 }

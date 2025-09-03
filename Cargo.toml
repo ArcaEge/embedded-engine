@@ -14,6 +14,7 @@ iter_variants = "0.2.0"
 
 # PICO-ONLY DEPENDENCIES
 [target.'cfg(target_arch = "arm")'.dependencies]
+libm = "0.2.15"
 cortex-m = "0.7.6"
 cortex-m-rt = "0.7"
 embedded-hal = { version = "1.0.0" }

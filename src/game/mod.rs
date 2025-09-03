@@ -1,4 +1,5 @@
 mod actors;
+mod sounds;
 mod sprites;
 pub mod world_actor_abstractions;
 mod worlds;
@@ -30,7 +31,7 @@ impl GameTrait for Game {
 
         self.world
             .as_mut()
-            .render(tick_count, &mut interaction_layer, engine);
+            .tick(tick_count, &mut interaction_layer, engine);
     }
 
     fn render(&mut self, tick_count: u64, engine: &mut EngineInteractionLayer) {
