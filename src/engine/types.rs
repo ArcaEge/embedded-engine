@@ -1,4 +1,5 @@
 use super::EngineInteractionLayer;
+use super::alloc::Vec;
 use iter_variants::IterVariants;
 use variant_count::VariantCount;
 
@@ -95,7 +96,7 @@ impl CornerRect {
 pub struct Sprite {
     pub width: u32,
     pub height: u32,
-    pub pixels: &'static [SpritePixel],
+    pub pixels: Vec<SpritePixel>,
 }
 
 impl Sprite {
@@ -126,7 +127,7 @@ pub enum SpritePixel {
 }
 
 /// Sound sample
-pub type Sound = &'static [SoundTone];
+pub type Sound = Vec<SoundTone>;
 
 /// Tone + length in ms
 pub struct SoundTone {

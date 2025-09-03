@@ -2,7 +2,7 @@ use super::{EngineInteractionLayer, Sound};
 
 /// Plays sounds
 pub struct SoundPlayer {
-    sound: &'static Sound,
+    sound: Sound,
     current_index: u32,
     micros_past_current_index: u64,
     last_timestamp: Option<u64>,
@@ -11,7 +11,7 @@ pub struct SoundPlayer {
 }
 
 impl SoundPlayer {
-    pub fn new(sound: &'static Sound) -> Self {
+    pub fn new(sound: Sound) -> Self {
         Self {
             sound,
             current_index: 0,

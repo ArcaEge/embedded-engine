@@ -1,4 +1,4 @@
-use super::super::sprites::PLAYER_SPRITE;
+use super::super::sprites::player_sprite;
 use super::super::world_actor_abstractions::{
     ActorTrait, GameInteractionLayer, WorldInteractionLayer,
 };
@@ -14,7 +14,7 @@ impl Player {
     pub fn new(location: Point) -> Self {
         Self {
             location,
-            sprite: PLAYER_SPRITE,
+            sprite: player_sprite(),
         }
     }
 }

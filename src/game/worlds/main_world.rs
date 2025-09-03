@@ -1,4 +1,4 @@
-use super::super::sounds::SOUNDTRACK;
+use super::super::sounds::soundtrack;
 use super::super::world_actor_abstractions::{
     ConstructableWorld, GameInteractionLayer, WorldTrait,
 };
@@ -35,7 +35,7 @@ impl ConstructableWorld for MainWorld {
 
 impl WorldTrait for MainWorld {
     fn init(&mut self, _game: &mut GameInteractionLayer, _engine: &mut EngineInteractionLayer) {
-        self.music.push(SoundPlayer::new(&SOUNDTRACK));
+        self.music.push(SoundPlayer::new(soundtrack()));
         self.set_current_music(Some(0));
         self.music.get_mut(0).unwrap().repeat = true;
     }
