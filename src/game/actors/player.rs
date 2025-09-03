@@ -2,19 +2,19 @@ use super::super::sprites::player_sprite;
 use super::super::world_actor_abstractions::{
     ActorTrait, GameInteractionLayer, WorldInteractionLayer,
 };
-use crate::engine::{EngineInteractionLayer, Point, Sprite};
+use crate::engine::{EngineInteractionLayer, Point, Sprite, alloc::Rc};
 
 /// The player
 pub struct Player {
     location: Point,
-    sprite: Sprite,
+    sprite: Rc<Sprite>,
 }
 
 impl Player {
     pub fn new(location: Point) -> Self {
         Self {
             location,
-            sprite: player_sprite(),
+            sprite: Rc::from(player_sprite()),
         }
     }
 }

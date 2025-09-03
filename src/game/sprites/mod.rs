@@ -1,12 +1,14 @@
-use crate::engine::{Sprite, SpritePixel, alloc::Vec};
+use crate::engine::{Sprite, SpritePixel};
 
 pub fn player_sprite() -> Sprite {
     Sprite {
-        width: 1,
+        width: 2,
         height: 1,
-        pixels: Vec::from([
+        pixels: [
             // 0
-            SpritePixel::Transparent,
-        ]),
+            SpritePixel::White,
+            SpritePixel::White,
+        ]
+        .to_vec(),
     }
 }

@@ -1,6 +1,8 @@
 use super::EngineInteractionLayer;
-use super::alloc::Vec;
+use super::alloc::{Rc, Vec};
 use iter_variants::IterVariants;
+use postcard::to_vec;
+use serde::{Deserialize, Serialize};
 use variant_count::VariantCount;
 
 pub trait GameTrait {
@@ -91,8 +93,28 @@ impl CornerRect {
     }
 }
 
+/// Initially serialize to SpritesheetInitial, then convert to Spritesheet
+#[derive(Serialize, Deserialize)]
+pub struct SpritesheetInitial {
+    pub sprites: Vec<Sprite>,
+}
+
+/// Uses Rc to prevent unnecessary cloning if more than one Actor uses the same sprite
+pub struct Spritesheet {
+    pub sprites: Vec<Rc<Sprite>>,
+}
+
+impl From<SpritesheetInitial> for Spritesheet {
+    fn from(initial: SpritesheetInitial) -> Self {
+        Self {
+            sprites: initial.sprites.into_iter().map(Rc::new).collect(),
+        }
+    }
+}
+
 /// Sprite
 /// TODO: Make this more memory efficient (SpritePixels only need 2 bits of memory but currently use 8)
+#[derive(Serialize, Deserialize)]
 pub struct Sprite {
     pub width: u32,
     pub height: u32,
@@ -117,9 +139,21 @@ impl Sprite {
     }
 }
 
+/// A single frame of an animation
+pub struct SpriteAnimationFrame {
+    sprite: Rc<Sprite>,
+    length_ticks: u64,
+}
+
+/// An entire animation
+pub struct SpriteAnimation {
+    sprites: Vec<SpriteAnimationFrame>,
+    length_ticks_total: u64,
+}
+
 /// Pixel of a sprite, Black, White or Transparent
 #[repr(u8)]
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, Serialize, Deserialize)]
 pub enum SpritePixel {
     Black = 0,
     White = 1,

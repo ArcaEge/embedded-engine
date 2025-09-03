@@ -24,7 +24,7 @@ impl ConstructableWorld for MainWorld {
     fn create() -> Box<dyn WorldTrait> {
         Box::new(Self {
             actors: Vec::new(),
-            player: Player::new(Point { x: 0, y: 0 }),
+            player: Player::new(Point { x: 5, y: 5 }),
             music: Vec::new(),
             sfx: Vec::new(),
             current_music: None,

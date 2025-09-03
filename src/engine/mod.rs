@@ -121,6 +121,8 @@ impl<T: GameTrait> Engine<T> {
 
         self.game.tick(tick_count, &mut interaction_layer);
 
+        self.game.render(tick_count, &mut interaction_layer);
+
         // Write to display
         self.framebuffer.show(&mut self.hal);
     }
