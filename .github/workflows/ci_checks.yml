@@ -54,7 +54,7 @@ jobs:
           target: thumbv6m-none-eabi
       - uses: dtolnay/rust-toolchain@master
         with:
-          toolchain: ${{ matrix.rust }}
+          components: clippy
           target: wasm32-unknown-unknown
       - run: cargo clippy --target thumbv6m-none-eabi --all-features -- --deny=warnings
       - run: cargo clippy --target wasm32-unknown-unknown --all-features -- --deny=warnings
