@@ -26,14 +26,15 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v3
-      - uses: dtolnay/rust-toolchain@master
-        with:
-          toolchain: ${{ matrix.rust }}
-          target: thumbv6m-none-eabi
-      - uses: dtolnay/rust-toolchain@master
-        with:
-          toolchain: ${{ matrix.rust }}
-          target: wasm32-unknown-unknown
+      # - uses: dtolnay/rust-toolchain@master
+      #   with:
+      #     toolchain: ${{ matrix.rust }}
+      #     target: thumbv6m-none-eabi
+      # - uses: dtolnay/rust-toolchain@master
+      #   with:
+      #     toolchain: ${{ matrix.rust }}
+      #     target: wasm32-unknown-unknown
+      - run: rustup target add thumbv6m-none-eabi wasm32-unknown-unknown
       - run: cargo install flip-link
       # Build for Pico
       - run: cargo build --all --target thumbv6m-none-eabi
