@@ -98,7 +98,7 @@ impl CornerRect {
     }
 }
 
-/// Initially serialize to SpritesheetInitial, then convert to Spritesheet
+/// Initially deserialize to SpritesheetInitial, then convert to Spritesheet
 #[derive(Serialize, Deserialize)]
 pub struct SpritesheetInitial {
     pub sprites: Vec<Sprite>,
