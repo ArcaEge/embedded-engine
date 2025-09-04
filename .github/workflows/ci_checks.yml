@@ -26,15 +26,14 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v3
-      # - uses: dtolnay/rust-toolchain@master
-      #   with:
-      #     toolchain: ${{ matrix.rust }}
-      #     target: thumbv6m-none-eabi
-      # - uses: dtolnay/rust-toolchain@master
-      #   with:
-      #     toolchain: ${{ matrix.rust }}
-      #     target: wasm32-unknown-unknown
-      - run: rustup target add thumbv6m-none-eabi wasm32-unknown-unknown
+      - uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: ${{ matrix.rust }}
+          target: thumbv6m-none-eabi
+      - uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: ${{ matrix.rust }}
+          target: wasm32-unknown-unknown
       - run: cargo install flip-link
       # Build for Pico
       - run: cargo build --all --target thumbv6m-none-eabi
@@ -53,7 +52,12 @@ jobs:
         with:
           components: clippy
           target: thumbv6m-none-eabi
-      - run: cargo clippy --all-features -- --deny=warnings
+      - uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: ${{ matrix.rust }}
+          target: wasm32-unknown-unknown
+      - run: cargo clippy --target thumbv6m-none-eabi --all-features -- --deny=warnings
+      - run: cargo clippy --target wasm32-unknown-unknown --all-features -- --deny=warnings
   formatting:
     name: Formatting
     runs-on: ubuntu-latest
