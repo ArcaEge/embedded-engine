@@ -13,7 +13,7 @@ Features (working):
 - Actor-World system
 - Sound
   - Sound player
-- Spritesheet support (see [ArcaEge/embedded-encoder](https://github.com/ArcaEge/embedded-encoder), this is the accompanying spritesheet encoder - currently a WIP)
+- Spritesheet support (see [ArcaEge/embedded-encoder](https://github.com/ArcaEge/embedded-encoder), this is the accompanying spritesheet encoder)
 
 Features (not yet implemented):
 
