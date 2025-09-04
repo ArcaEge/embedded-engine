@@ -125,7 +125,7 @@ impl HAL {
     }
 
     // Delay for a number of microseconds (converts to milliseconds, doesn't actually delay for microseconds)
-    pub async fn delay_us(self: &mut Self, us: u32) {
+    pub async fn delay_us(&mut self, us: u32) {
         sleep(Duration::from_millis(
             ((us as f32) / 1000.0f32).round() as u64
         ))
