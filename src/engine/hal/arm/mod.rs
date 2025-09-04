@@ -5,6 +5,7 @@ use core::cell::RefCell;
 mod display;
 mod peripherals_io;
 
+#[allow(clippy::upper_case_acronyms)]
 pub struct HAL {
     peripherals: peripherals_io::PeripheralsIO,
     display: display::Display,

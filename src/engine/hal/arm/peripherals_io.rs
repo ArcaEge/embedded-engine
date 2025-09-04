@@ -122,7 +122,7 @@ impl PeripheralsIO {
     }
 
     /// Delay for a number of microseconds
-    fn delay_us(self: &mut Self, us: u32) {
+    fn delay_us(&mut self, us: u32) {
         self.delay.delay_us(us);
     }
 
@@ -195,7 +195,7 @@ impl HAL {
     }
 
     /// Delay for a number of microseconds
-    pub fn delay_us(self: &mut Self, us: u32) {
+    pub fn delay_us(&mut self, us: u32) {
         self.peripherals.delay_us(us);
     }
 

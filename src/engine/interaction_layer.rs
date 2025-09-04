@@ -1,3 +1,5 @@
+use core::fmt::Error;
+
 use super::*;
 
 /// Engine interaction layer (i.e. the functions the game can call and the objects it can access to interact with the engine)
@@ -15,9 +17,14 @@ impl<'a> EngineInteractionLayer<'a> {
     }
 
     /// Sets the state of a pixel with bounds checking to avoid crashing on an invalid coordinate
-    pub fn set_pixel_state_check_bounds(&mut self, x: i32, y: i32, state: bool) -> Result<(), ()> {
+    pub fn set_pixel_state_check_bounds(
+        &mut self,
+        x: i32,
+        y: i32,
+        state: bool,
+    ) -> Result<(), Error> {
         if x >= DISPLAY_WIDTH as i32 || x < 0 || y >= DISPLAY_HEIGHT as i32 || y < 0 {
-            return Err(());
+            return Err(Error);
         }
 
         self.framebuffer.set_pixel_state(x as u32, y as u32, state);

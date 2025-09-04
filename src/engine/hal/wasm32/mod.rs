@@ -8,6 +8,7 @@ use std::time::Duration;
 use wasm_bindgen::JsCast;
 use web_sys::{AudioContext, OscillatorNode, OscillatorType, window};
 
+#[allow(clippy::upper_case_acronyms)]
 pub struct HAL {
     canvas_context: web_sys::CanvasRenderingContext2d,
     scaling_factor: u32,

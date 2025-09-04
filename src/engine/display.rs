@@ -24,7 +24,7 @@ impl FrameBuffer {
     }
 
     pub(super) fn show(&self, hal: &mut HAL) {
-        hal.display_buffer(&self);
+        hal.display_buffer(self);
     }
 
     pub(super) fn set_pixel_state(&mut self, x: u32, y: u32, state: bool) {
@@ -55,6 +55,12 @@ impl FrameBuffer {
 
     fn get_pixel_page_no(y: u32) -> u32 {
         y / 8 // Each page is 8 pixels tall
+    }
+}
+
+impl Default for FrameBuffer {
+    fn default() -> Self {
+        Self::new()
     }
 }
 

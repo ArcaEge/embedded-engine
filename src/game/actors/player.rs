@@ -15,7 +15,7 @@ impl Player {
             location,
             sprite: spritesheet
                 .sprites
-                .get(0)
+                .first()
                 .expect("Failed to get sprite 0")
                 .clone(),
         }

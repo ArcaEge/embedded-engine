@@ -37,7 +37,7 @@ impl<T: GameTrait> Engine<T> {
         let hal = HAL::new();
         Self {
             game: T::new(),
-            hal: hal,
+            hal,
             framebuffer: FrameBuffer::new(),
             inputs: [Input::new(); Inputs::VARIANT_COUNT],
         }
@@ -131,7 +131,7 @@ impl<T: GameTrait> Engine<T> {
     fn process_inputs(&mut self, current_tick: u64) {
         self.hal.update_inputs();
 
-        let inputs_state = self.hal.inputs.borrow().clone();
+        let inputs_state = *self.hal.inputs.borrow();
 
         Inputs::iter_variants(|input| {
             Self::process_input(
@@ -153,5 +153,11 @@ impl<T: GameTrait> Engine<T> {
                 input.released_tick = Some(current_tick);
             }
         }
+    }
+}
+
+impl<T: GameTrait> Default for Engine<T> {
+    fn default() -> Self {
+        Self::new()
     }
 }

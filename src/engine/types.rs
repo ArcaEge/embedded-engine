@@ -36,6 +36,12 @@ impl Input {
     }
 }
 
+impl Default for Input {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 /// A less stupid way of doing inputs (I think?), helps avoid code duplication
 #[repr(usize)]
 #[derive(VariantCount, IterVariants, Clone, Copy)]
@@ -138,19 +144,19 @@ impl Sprite {
     }
 }
 
-/// A single frame of an animation
-/// TODO: implement this
-pub struct SpriteAnimationFrame {
-    sprite: Rc<Sprite>,
-    length_ticks: u64,
-}
+// /// A single frame of an animation
+// /// TODO: implement this
+// pub struct SpriteAnimationFrame {
+//     sprite: Rc<Sprite>,
+//     length_ticks: u64,
+// }
 
-/// An entire animation
-/// TODO: implement this asw
-pub struct SpriteAnimation {
-    sprites: Vec<SpriteAnimationFrame>,
-    length_ticks_total: u64,
-}
+// /// An entire animation
+// /// TODO: implement this asw
+// pub struct SpriteAnimation {
+//     sprites: Vec<SpriteAnimationFrame>,
+//     length_ticks_total: u64,
+// }
 
 /// Pixel of a sprite, Black, White or Transparent
 #[repr(u8)]

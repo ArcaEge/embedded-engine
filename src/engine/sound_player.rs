@@ -98,7 +98,7 @@ impl SoundPlayer {
             }
 
             // Reached the end of the sound
-            if should_reset == true {
+            if should_reset {
                 self.reset(engine);
 
                 if !self.repeat {

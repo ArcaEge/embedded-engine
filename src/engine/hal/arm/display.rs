@@ -35,13 +35,13 @@ impl Display {
 
         // == Initialise display ==
         // Set display state to off while configuring everything
-        s.write_command(DISPLAY_SET_STATE | 0).unwrap();
+        s.write_command(DISPLAY_SET_STATE).unwrap();
 
         // Set to horizontal addressing mode
         s.write_command(DISPLAY_SET_MEMORY_ADDRESSING_MODE).unwrap();
         s.write_command(0x00).unwrap();
 
-        s.write_command(DISPLAY_START_LINE | 0x00).unwrap();
+        s.write_command(DISPLAY_START_LINE).unwrap();
         s.write_command(DISPLAY_SEG_REMAP | 0x01).unwrap();
 
         s.write_command(DISPLAY_SET_MUX_RATIO).unwrap();
@@ -67,8 +67,8 @@ impl Display {
         s.write_command(DISPLAY_SET_CONTRAST).unwrap();
         s.write_command(0xFF).unwrap();
 
-        s.write_command(DISPLAY_ENTIRE_ON | 0).unwrap();
-        s.write_command(DISPLAY_INVERTED_STATE | 0).unwrap();
+        s.write_command(DISPLAY_ENTIRE_ON).unwrap();
+        s.write_command(DISPLAY_INVERTED_STATE).unwrap();
 
         s.write_command(DISPLAY_SET_CHARGE_PUMP).unwrap();
         s.write_command(0x14).unwrap();
