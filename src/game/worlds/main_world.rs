@@ -1,14 +1,13 @@
-use super::super::sounds::soundtrack;
-use super::super::world_actor_abstractions::{
-    ConstructableWorld, GameInteractionLayer, WorldTrait,
+use super::super::{
+    ActorTrait, Camera, WorldInteractionLayer,
+    actors::Player,
+    sounds::soundtrack,
+    world_actor_abstractions::{ConstructableWorld, GameInteractionLayer, WorldTrait},
 };
-use crate::{
-    engine::{
-        EngineInteractionLayer, Point, Spritesheet,
-        alloc::{Box, Vec},
-        sound_player::SoundPlayer,
-    },
-    game::{ActorTrait, WorldInteractionLayer, actors::Player},
+use crate::engine::{
+    EngineInteractionLayer, PreciseOffset, PrecisePoint, Spritesheet,
+    alloc::{Box, Vec},
+    sound_player::SoundPlayer,
 };
 
 pub struct MainWorld {
@@ -18,17 +17,26 @@ pub struct MainWorld {
     sfx: Vec<SoundPlayer>,
     current_music: Option<usize>,
     current_sfx: Option<usize>,
+    camera: Camera,
 }
 
 impl ConstructableWorld for MainWorld {
     fn create(spritesheet: &Spritesheet) -> Box<dyn WorldTrait> {
         Box::new(Self {
             actors: Vec::new(),
-            player: Player::create(Point { x: 5, y: 5 }, spritesheet),
+            player: Player::create(PrecisePoint { x: 5.0, y: 5.0 }, spritesheet),
             music: Vec::new(),
             sfx: Vec::new(),
             current_music: None,
             current_sfx: None,
+            camera: Camera {
+                current_offset: PreciseOffset { x: 0.0, y: 0.0 },
+                min_offset: PreciseOffset {
+                    x: -100.0,
+                    y: -100.0,
+                },
+                max_offset: PreciseOffset { x: 100.0, y: 100.0 },
+            },
         })
     }
 }
@@ -51,6 +59,7 @@ impl WorldTrait for MainWorld {
             sfx: &mut self.sfx,
             current_music: &mut self.current_music,
             current_sfx: &mut self.current_sfx,
+            camera: &mut self.camera,
         };
 
         // Tick Player
@@ -75,6 +84,7 @@ impl WorldTrait for MainWorld {
             sfx: &mut self.sfx,
             current_music: &mut self.current_music,
             current_sfx: &mut self.current_sfx,
+            camera: &mut self.camera,
         };
 
         // Render Actors
@@ -105,5 +115,9 @@ impl WorldTrait for MainWorld {
     }
     fn set_current_sfx(&mut self, sfx: Option<usize>) {
         self.current_sfx = sfx;
+    }
+
+    fn get_camera(&self) -> &Camera {
+        &self.camera
     }
 }

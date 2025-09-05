@@ -134,6 +134,12 @@ impl HAL {
 
     pub async fn delay_until_us(&mut self, until: u64) {
         let current_timestamp = self.micros();
+
+        // Prevent unsigned subtraction underflow
+        if until <= current_timestamp {
+            return;
+        }
+
         self.delay_us((until - current_timestamp) as u32).await;
     }
 

@@ -1,23 +1,25 @@
 use super::super::world_actor_abstractions::{
     ActorTrait, GameInteractionLayer, WorldInteractionLayer,
 };
-use crate::engine::{EngineInteractionLayer, Point, Sprite, Spritesheet, alloc::Rc};
+use crate::engine::{
+    EngineInteractionLayer, PrecisePoint, Sprite, SpriteAnimation, Spritesheet,
+    alloc::{Rc, Vec},
+};
 
 /// The player
 pub struct Player {
-    location: Point,
-    sprite: Rc<Sprite>,
+    location: PrecisePoint,
+    sprite_animation: SpriteAnimation,
 }
 
 impl Player {
-    pub fn create(location: Point, spritesheet: &Spritesheet) -> Self {
+    pub fn create(location: PrecisePoint, spritesheet: &Spritesheet) -> Self {
         Self {
             location,
-            sprite: spritesheet
-                .sprites
-                .first()
-                .expect("Failed to get sprite 0")
-                .clone(),
+            sprite_animation: SpriteAnimation::new(
+                Vec::from([(0, 5), (1, 5), (2, 5), (3, 5)]),
+                spritesheet,
+            ),
         }
     }
 }
@@ -38,13 +40,18 @@ impl ActorTrait for Player {
         _game: &mut GameInteractionLayer,
         _engine: &mut EngineInteractionLayer,
     ) {
+        self.sprite_animation.tick();
     }
 
-    fn get_location(&self) -> Point {
+    fn get_precise_location(&self) -> PrecisePoint {
         self.location
     }
 
-    fn get_sprite(&self) -> &Sprite {
-        &self.sprite
+    fn get_sprite(&self) -> Rc<Sprite> {
+        self.sprite_animation.get_current_sprite()
+    }
+
+    fn is_flipped(&self) -> bool {
+        false
     }
 }

@@ -2,7 +2,7 @@
 
 A Rust-based basic pixel game engine that can compile to both WASM and to bare metal on the RP2040, using a HTML canvas or an SSD1306 for display output. The goal is to support basic 3D graphics in the future.
 
-[Demo and video](https://arcaege.github.io/embedded-engine/)
+[🎥 Demo and video](https://arcaege.github.io/embedded-engine/)
 
 Features (working):
 
@@ -14,6 +14,10 @@ Features (working):
 - Sound
   - Sound player
 - Spritesheet support (see [ArcaEge/embedded-encoder](https://github.com/ArcaEge/embedded-encoder), this is the accompanying spritesheet encoder)
+- Ability to flip sprites in the x axis
+- 2D camera
+  - On-screen display
+- Spritesheet animations
 
 Features (not yet implemented):
 
@@ -60,6 +64,14 @@ cargo rp2040
 cd ./www/
 npm install
 npm run start
+```
+
+## Documentation
+
+Run
+
+```bash
+cargo doc --open
 ```
 
 ## Assets to use

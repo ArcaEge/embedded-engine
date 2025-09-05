@@ -73,12 +73,14 @@ impl<'a> EngineInteractionLayer<'a> {
     /// * `location` - Where to draw it
     /// * `draw_white` - Draw white pixels
     /// * `draw_black` - Draw black pixels
+    /// * `flip_x` - Flip sprite in the x-axis
     pub fn draw_sprite(
         &mut self,
         sprite: &Sprite,
         location: Point,
         draw_white: bool,
         draw_black: bool,
+        flip_x: bool,
     ) {
         let bottom_right_exclusive = Point {
             x: location.x + sprite.width as i32,
@@ -101,7 +103,12 @@ impl<'a> EngineInteractionLayer<'a> {
                     break;
                 }
 
-                match sprite.get_pixel((x - location.x) as u32, (y - location.y) as u32) {
+                let pixel_x = if flip_x {
+                    (bottom_right_exclusive.x - 1 - x) as u32
+                } else {
+                    (x - location.x) as u32
+                };
+                match sprite.get_pixel(pixel_x, (y - location.y) as u32) {
                     SpritePixel::Black => {
                         if draw_black {
                             self.set_pixel_state(x as u32, y as u32, false);

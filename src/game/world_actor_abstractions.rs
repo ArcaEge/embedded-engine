@@ -1,8 +1,8 @@
 use core::fmt::Error;
 
 use crate::engine::{
-    EngineInteractionLayer, Point, Sprite, Spritesheet,
-    alloc::{Box, Vec},
+    EngineInteractionLayer, Point, PreciseOffset, PrecisePoint, Sprite, Spritesheet,
+    alloc::{Box, Rc, Vec},
     sound_player::SoundPlayer,
 };
 
@@ -52,6 +52,8 @@ pub trait WorldTrait {
         }
     }
 
+    fn get_camera(&self) -> &Camera;
+
     fn get_music(&mut self) -> &mut Vec<SoundPlayer>;
     fn get_sfx(&mut self) -> &mut Vec<SoundPlayer>;
 
@@ -92,19 +94,46 @@ pub trait ActorTrait {
     fn render(
         &mut self,
         _tick_count: u64,
-        _world: &mut WorldInteractionLayer,
+        world: &mut WorldInteractionLayer,
         _game: &mut GameInteractionLayer,
         engine: &mut EngineInteractionLayer,
     ) {
-        self.get_sprite()
-            .render(self.get_location(), engine, true, true);
+        if self.is_osd() {
+            self.get_sprite()
+                .render(self.get_location(), engine, true, true, self.is_flipped());
+        } else {
+            self.get_sprite().render(
+                self.get_precise_location()
+                    .apply_inverted_offset(world.camera.current_offset)
+                    .into(),
+                engine,
+                true,
+                true,
+                self.is_flipped(),
+            );
+        }
     }
 
     /// Return the location of the Actor
-    fn get_location(&self) -> Point;
+    fn get_location(&self) -> Point {
+        self.get_precise_location().into()
+    }
+
+    /// Return the precise location of the Actor
+    fn get_precise_location(&self) -> PrecisePoint;
+
+    /// Returns whether the Actor is part of the on-screen display (i.e. fixed in place even if the world camera moves)
+    fn is_osd(&self) -> bool {
+        false
+    }
+
+    /// Returns whether the sprite should be flipped or not in the x axis
+    fn is_flipped(&self) -> bool {
+        false
+    }
 
     /// Return the sprite of the Actor
-    fn get_sprite(&self) -> &Sprite;
+    fn get_sprite(&self) -> Rc<Sprite>;
 }
 
 /// Gives the Actor a create() function, used for keeping the core ActorTrait dyn compatible
@@ -123,6 +152,7 @@ pub struct WorldInteractionLayer<'a> {
     pub sfx: &'a mut Vec<SoundPlayer>,
     pub current_music: &'a mut Option<usize>,
     pub current_sfx: &'a mut Option<usize>,
+    pub camera: &'a mut Camera,
 }
 
 impl<'a> WorldInteractionLayer<'a> {
@@ -171,4 +201,10 @@ impl<'a> WorldInteractionLayer<'a> {
             Ok(())
         }
     }
+}
+
+pub struct Camera {
+    pub current_offset: PreciseOffset,
+    pub min_offset: PreciseOffset,
+    pub max_offset: PreciseOffset,
 }

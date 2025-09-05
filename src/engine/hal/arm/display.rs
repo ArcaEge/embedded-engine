@@ -120,6 +120,6 @@ impl Display {
 impl HAL {
     // Displays the given framebuffer
     pub fn display_buffer(&mut self, framebuffer: &FrameBuffer) {
-        self.display.write_buffer(framebuffer).unwrap();
+        let _ = self.display.write_buffer(framebuffer);
     }
 }

@@ -1,6 +1,7 @@
 use super::EngineInteractionLayer;
 use super::alloc::{Rc, Vec};
 use iter_variants::IterVariants;
+use libm::roundf;
 use serde::{Deserialize, Serialize};
 use variant_count::VariantCount;
 
@@ -57,6 +58,52 @@ pub enum Inputs {
 pub struct Point {
     pub x: i32,
     pub y: i32,
+}
+
+#[derive(Clone, Copy)]
+pub struct PrecisePoint {
+    pub x: f32,
+    pub y: f32,
+}
+
+impl From<PrecisePoint> for Point {
+    fn from(value: PrecisePoint) -> Self {
+        Self {
+            x: roundf(value.x) as i32,
+            y: roundf(value.y) as i32,
+        }
+    }
+}
+
+impl From<Point> for PrecisePoint {
+    fn from(value: Point) -> Self {
+        Self {
+            x: value.x as f32,
+            y: value.y as f32,
+        }
+    }
+}
+
+impl PrecisePoint {
+    pub fn apply_offset(&self, offset: PreciseOffset) -> Self {
+        Self {
+            x: self.x + offset.x,
+            y: self.y + offset.y,
+        }
+    }
+
+    pub fn apply_inverted_offset(&self, offset: PreciseOffset) -> Self {
+        Self {
+            x: self.x - offset.x,
+            y: self.y - offset.y,
+        }
+    }
+}
+
+#[derive(Clone, Copy)]
+pub struct PreciseOffset {
+    pub x: f32,
+    pub y: f32,
 }
 
 /// Rectangle from origin (top left point), width and height
@@ -139,24 +186,77 @@ impl Sprite {
         engine: &mut EngineInteractionLayer,
         draw_white: bool,
         draw_black: bool,
+        flip_x: bool,
     ) {
-        engine.draw_sprite(self, location, draw_white, draw_black);
+        engine.draw_sprite(self, location, draw_white, draw_black, flip_x);
     }
 }
 
-// /// A single frame of an animation
-// /// TODO: implement this
-// pub struct SpriteAnimationFrame {
-//     sprite: Rc<Sprite>,
-//     length_ticks: u64,
-// }
+/// A single frame of an animation
+pub struct SpriteAnimationFrame {
+    sprite: Rc<Sprite>,
+    length_ticks: u64,
+}
 
-// /// An entire animation
-// /// TODO: implement this asw
-// pub struct SpriteAnimation {
-//     sprites: Vec<SpriteAnimationFrame>,
-//     length_ticks_total: u64,
-// }
+/// An entire animation
+pub struct SpriteAnimation {
+    frames: Vec<SpriteAnimationFrame>,
+    ticks_elapsed_in_current_frame: u64,
+    current_frame_index: usize,
+}
+
+impl SpriteAnimation {
+    /// From Vec<(sprite_index, length_ticks)>
+    pub fn new(sprite_vec: Vec<(usize, u64)>, spritesheet: &Spritesheet) -> Self {
+        let ticks_elapsed_in_current_frame = 0;
+
+        let frames = sprite_vec
+            .iter()
+            .map(|s| SpriteAnimationFrame {
+                sprite: spritesheet.sprites.get(s.0).unwrap().clone(),
+                length_ticks: s.1,
+            })
+            .collect();
+
+        Self {
+            frames,
+            ticks_elapsed_in_current_frame,
+            current_frame_index: 0,
+        }
+    }
+
+    pub fn from_animation_vec(frames: Vec<SpriteAnimationFrame>) -> Self {
+        let ticks_elapsed_in_current_frame = 0;
+
+        Self {
+            frames,
+            ticks_elapsed_in_current_frame,
+            current_frame_index: 0,
+        }
+    }
+
+    pub fn get_current_sprite(&self) -> Rc<Sprite> {
+        self.frames
+            .get(self.current_frame_index)
+            .unwrap()
+            .sprite
+            .clone()
+    }
+
+    pub fn tick(&mut self) {
+        let current_frame = self.frames.get(self.current_frame_index).unwrap();
+        self.ticks_elapsed_in_current_frame += 1;
+
+        if self.ticks_elapsed_in_current_frame >= current_frame.length_ticks {
+            self.ticks_elapsed_in_current_frame = 0;
+            self.current_frame_index += 1;
+
+            if self.current_frame_index >= self.frames.len() {
+                self.current_frame_index = 0;
+            }
+        }
+    }
+}
 
 /// Pixel of a sprite, Black, White or Transparent
 #[repr(u8)]
