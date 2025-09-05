@@ -270,7 +270,7 @@ pub enum SpritePixel {
 /// Sound sample
 pub type Sound = Vec<SoundTone>;
 
-/// Tone + length in ms
+/// Tone + length in us
 pub struct SoundTone {
     pub freq: f32,
     pub length_us: u64,

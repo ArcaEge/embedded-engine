@@ -203,12 +203,7 @@ impl HAL {
     pub fn delay_until_us(&mut self, until: u64) {
         let current_timestamp = self.micros();
 
-        // Prevent unsigned subtraction underflow
-        if until <= current_timestamp {
-            return;
-        }
-
-        self.delay_us((until - current_timestamp) as u32);
+        self.delay_us(until.saturating_sub(current_timestamp) as u32);
     }
 
     pub fn update_inputs(&mut self) {

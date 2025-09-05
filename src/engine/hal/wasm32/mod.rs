@@ -6,7 +6,7 @@ use std::cell::RefCell;
 use std::rc::Rc;
 use std::time::Duration;
 use wasm_bindgen::JsCast;
-use web_sys::{AudioContext, OscillatorNode, OscillatorType, window};
+use web_sys::{AudioContext, GainNode, OscillatorNode, OscillatorType, window};
 
 #[allow(clippy::upper_case_acronyms)]
 pub struct HAL {
@@ -14,6 +14,7 @@ pub struct HAL {
     scaling_factor: u32,
     pub inputs: Rc<RefCell<[bool; Inputs::VARIANT_COUNT]>>,
     oscillator: OscillatorNode,
+    gain_node: GainNode,
 }
 
 /// WASM hardware abstraction layer
@@ -41,17 +42,27 @@ impl HAL {
 
         let audio_context = AudioContext::new().unwrap();
         let oscillator = audio_context.create_oscillator().unwrap();
-        oscillator.set_type(OscillatorType::Square);
-        oscillator
+        let gain_node = audio_context.create_gain().unwrap();
+
+        oscillator.connect_with_audio_node(&gain_node).unwrap();
+        gain_node
             .connect_with_audio_node(&audio_context.destination())
             .unwrap();
+
+        oscillator.set_type(OscillatorType::Square);
 
         let mut s = Self {
             canvas_context,
             scaling_factor,
             inputs: Rc::new(RefCell::new(inputs)),
             oscillator,
+            gain_node,
         };
+
+        // Set frequency to a known value and set gain to 0 and start oscillator
+        s.oscillator.frequency().set_value(440.0);
+        s.gain_node.gain().set_value(0.0);
+        s.oscillator.start().unwrap();
 
         s.setup_inputs();
 
@@ -135,12 +146,8 @@ impl HAL {
     pub async fn delay_until_us(&mut self, until: u64) {
         let current_timestamp = self.micros();
 
-        // Prevent unsigned subtraction underflow
-        if until <= current_timestamp {
-            return;
-        }
-
-        self.delay_us((until - current_timestamp) as u32).await;
+        self.delay_us(until.saturating_sub(current_timestamp) as u32)
+            .await;
     }
 
     pub fn display_buffer(&mut self, framebuffer: &FrameBuffer) {
@@ -175,8 +182,8 @@ impl HAL {
 
     pub fn set_sound_state(&mut self, state: bool) {
         let _ = match state {
-            true => self.oscillator.start(),
-            false => self.oscillator.stop(),
+            true => self.gain_node.gain().set_value(0.2),
+            false => self.gain_node.gain().set_value(0.0),
         };
     }
 }
