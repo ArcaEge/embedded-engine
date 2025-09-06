@@ -4,14 +4,17 @@ mod sprites;
 pub mod world_actor_abstractions;
 mod worlds;
 
-use crate::engine::{alloc::Box, *};
+use crate::engine::{
+    alloc::{Box, Rc},
+    *,
+};
 use postcard::from_bytes;
 pub use world_actor_abstractions::*;
 
 // Game stuff goes here
 pub struct Game {
     world: Box<dyn WorldTrait>,
-    spritesheet: Spritesheet,
+    spritesheet: Rc<Spritesheet>,
 }
 
 impl GameTrait for Game {
@@ -19,10 +22,10 @@ impl GameTrait for Game {
         let spritesheet_bytes = include_bytes!("sprites/spritesheet.embsprite");
         let spritesheet_initial: SpritesheetInitial = from_bytes(spritesheet_bytes)
             .expect("Failed to parse spritesheet file, invalid format");
-        let spritesheet = Spritesheet::from(spritesheet_initial);
+        let spritesheet = Rc::new(Spritesheet::from(spritesheet_initial));
         Self {
-            world: worlds::MainWorld::create(&spritesheet),
-            spritesheet,
+            world: worlds::MainWorld::create(spritesheet.clone()),
+            spritesheet: spritesheet,
         }
     }
 

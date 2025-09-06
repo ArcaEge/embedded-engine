@@ -66,7 +66,7 @@ pub trait WorldTrait {
 
 /// Gives the World a create() function, used for keeping the core WorldTrait dyn compatible
 pub trait ConstructableWorld {
-    fn create(spritesheet: &Spritesheet) -> Box<dyn WorldTrait>;
+    fn create(spritesheet: Rc<Spritesheet>) -> Box<dyn WorldTrait>;
 }
 
 /// Actor = object in the game
@@ -136,9 +136,10 @@ pub trait ActorTrait {
     fn get_sprite(&self) -> Rc<Sprite>;
 }
 
-/// Gives the Actor a create() function, used for keeping the core ActorTrait dyn compatible
+/// Gives the Actor a create() function, used for keeping the core ActorTrait dyn compatible.
+/// This is redundant for now, but I might use it in the future for something like loading actors from a vec
 pub trait ConstructableActor {
-    fn create(location: Point, spritesheet: &Spritesheet) -> Box<dyn ActorTrait>;
+    fn create(location: PrecisePoint, spritesheet: &Spritesheet) -> Box<dyn ActorTrait>;
 }
 
 /// Interaction layer used to pass data between the world and game

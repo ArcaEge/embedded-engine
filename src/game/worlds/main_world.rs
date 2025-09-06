@@ -1,12 +1,12 @@
 use super::super::{
     ActorTrait, Camera, WorldInteractionLayer,
-    actors::Player,
+    actors::{Player, StaticActor},
     sounds::soundtrack,
     world_actor_abstractions::{ConstructableWorld, GameInteractionLayer, WorldTrait},
 };
 use crate::engine::{
     EngineInteractionLayer, PreciseOffset, PrecisePoint, Spritesheet,
-    alloc::{Box, Vec},
+    alloc::{Box, Rc, Vec},
     sound_player::SoundPlayer,
 };
 
@@ -18,13 +18,14 @@ pub struct MainWorld {
     current_music: Option<usize>,
     current_sfx: Option<usize>,
     camera: Camera,
+    spritesheet: Rc<Spritesheet>,
 }
 
 impl ConstructableWorld for MainWorld {
-    fn create(spritesheet: &Spritesheet) -> Box<dyn WorldTrait> {
+    fn create(spritesheet: Rc<Spritesheet>) -> Box<dyn WorldTrait> {
         Box::new(Self {
             actors: Vec::new(),
-            player: Player::create(PrecisePoint { x: 5.0, y: 5.0 }, spritesheet),
+            player: Player::create(PrecisePoint { x: 5.0, y: 5.0 }, spritesheet.clone()),
             music: Vec::new(),
             sfx: Vec::new(),
             current_music: None,
@@ -37,6 +38,7 @@ impl ConstructableWorld for MainWorld {
                 },
                 max_offset: PreciseOffset { x: 100.0, y: 100.0 },
             },
+            spritesheet,
         })
     }
 }
@@ -46,6 +48,22 @@ impl WorldTrait for MainWorld {
         self.music.push(SoundPlayer::new(soundtrack()));
         self.set_current_music(Some(0));
         self.music.get_mut(0).unwrap().repeat = true;
+
+        self.actors.push(StaticActor::create(
+            PrecisePoint { x: 60.0, y: 25.0 },
+            self.spritesheet.clone(),
+            Vec::from([(75, 100)]),
+            false,
+        ));
+
+        self.actors.push(StaticActor::create(
+            PrecisePoint { x: 35.0, y: 40.0 },
+            self.spritesheet.clone(),
+            Vec::from([(65, 100)]),
+            false,
+        ));
+
+        // TODO: Call the init() method of actors
     }
 
     fn tick(

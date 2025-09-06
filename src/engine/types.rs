@@ -207,7 +207,7 @@ pub struct SpriteAnimation {
 
 impl SpriteAnimation {
     /// From Vec<(sprite_index, length_ticks)>
-    pub fn new(sprite_vec: Vec<(usize, u64)>, spritesheet: &Spritesheet) -> Self {
+    pub fn new(sprite_vec: Vec<(usize, u64)>, spritesheet: Rc<Spritesheet>) -> Self {
         let ticks_elapsed_in_current_frame = 0;
 
         let frames = sprite_vec

@@ -15,6 +15,7 @@ module.exports = {
     static: path.resolve(__dirname, "."),
     hot: true,
     port: 8080,
+    allowedHosts: 'all',  // So that I can use ngrok to show others
   },
   plugins: [
     new HtmlWebpackPlugin({

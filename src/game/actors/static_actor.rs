@@ -3,36 +3,32 @@ use super::super::world_actor_abstractions::{
 };
 use crate::engine::{
     EngineInteractionLayer, PrecisePoint, Sprite, SpriteAnimation, Spritesheet,
-    alloc::{Rc, Vec},
+    alloc::{Box, Rc, Vec},
 };
 
-/// The player
-pub struct Player {
+/// A static actor, it can have an animation but not much else
+pub struct StaticActor {
     location: PrecisePoint,
     sprite_animation: SpriteAnimation,
+    flipped: bool,
 }
 
-impl Player {
-    pub fn create(location: PrecisePoint, spritesheet: Rc<Spritesheet>) -> Self {
-        Self {
+impl StaticActor {
+    pub fn create(
+        location: PrecisePoint,
+        spritesheet: Rc<Spritesheet>,
+        sprite_vec: Vec<(usize, u64)>,
+        flipped: bool,
+    ) -> Box<dyn ActorTrait> {
+        Box::new(Self {
             location,
-            sprite_animation: SpriteAnimation::new(
-                Vec::from([(0, 5), (1, 5), (2, 5), (3, 5)]),
-                spritesheet,
-            ),
-        }
+            sprite_animation: SpriteAnimation::new(sprite_vec, spritesheet),
+            flipped,
+        })
     }
 }
 
-impl ActorTrait for Player {
-    fn init(
-        &mut self,
-        _world: &mut WorldInteractionLayer,
-        _game: &mut GameInteractionLayer,
-        _engine: &mut EngineInteractionLayer,
-    ) {
-    }
-
+impl ActorTrait for StaticActor {
     fn tick(
         &mut self,
         _tick_count: u64,
@@ -52,6 +48,6 @@ impl ActorTrait for Player {
     }
 
     fn is_flipped(&self) -> bool {
-        false
+        self.flipped
     }
 }
