@@ -2,7 +2,7 @@ use crate::engine::alloc::Vec;
 
 use crate::engine::{Sound, SoundTone, tones::Tone};
 
-pub fn soundtrack() -> Sound {
+pub fn _soundtrack() -> Sound {
     Vec::from([
         SoundTone {
             freq: Tone::C4.to_freq(),

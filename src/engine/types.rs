@@ -1,5 +1,5 @@
 use super::EngineInteractionLayer;
-use super::alloc::{Rc, String, Vec};
+use super::alloc::{Rc, Vec};
 use iter_variants::IterVariants;
 use libm::roundf;
 use serde::{Deserialize, Serialize};
