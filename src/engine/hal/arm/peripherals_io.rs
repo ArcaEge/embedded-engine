@@ -183,7 +183,7 @@ impl PeripheralsIO {
         // No if statement needed :D
         self.pwm
             .channel_a
-            .set_duty_cycle_percent(2 * state as u8) // 2% duty cycle seems to make it sound nicer
+            .set_duty_cycle_percent(30 * state as u8) // 30% duty cycle seems to make it sound nicer
             .expect("PWM error, failed to set the PWM state");
     }
 }
