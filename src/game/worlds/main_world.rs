@@ -1,14 +1,14 @@
 use super::super::{
     ActorTrait, Camera, WorldInteractionLayer,
     actors::{Player, StaticActor},
-    sounds::soundtrack,
     world_actor_abstractions::{ConstructableWorld, GameInteractionLayer, WorldTrait},
 };
 use crate::engine::{
-    EngineInteractionLayer, PreciseOffset, PrecisePoint, Spritesheet,
+    EngineInteractionLayer, PreciseOffset, PrecisePoint, Sound, Spritesheet,
     alloc::{Box, Rc, Vec},
     sound_player::SoundPlayer,
 };
+use postcard::from_bytes;
 
 pub struct MainWorld {
     pub actors: Vec<Box<dyn ActorTrait>>,
@@ -45,7 +45,11 @@ impl ConstructableWorld for MainWorld {
 
 impl WorldTrait for MainWorld {
     fn init(&mut self, _game: &mut GameInteractionLayer, _engine: &mut EngineInteractionLayer) {
-        self.music.push(SoundPlayer::new(soundtrack()));
+        let soundtrack_bytes = include_bytes!("../sounds/doom.embsound");
+        let soundtrack: Sound =
+            from_bytes(soundtrack_bytes).expect("Failed to parse sound file, invalid format");
+
+        self.music.push(SoundPlayer::new(soundtrack));
         self.set_current_music(Some(0));
         self.music.get_mut(0).unwrap().repeat = true;
 

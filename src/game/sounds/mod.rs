@@ -33,7 +33,7 @@ pub fn soundtrack() -> Sound {
             length_us: 200_000,
         },
         SoundTone {
-            freq: Tone::C2.to_freq(),
+            freq: Tone::C5.to_freq(),
             length_us: 200_000,
         },
     ])

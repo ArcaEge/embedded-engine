@@ -1,5 +1,5 @@
 use super::EngineInteractionLayer;
-use super::alloc::{Rc, Vec};
+use super::alloc::{Rc, String, Vec};
 use iter_variants::IterVariants;
 use libm::roundf;
 use serde::{Deserialize, Serialize};
@@ -271,7 +271,10 @@ pub enum SpritePixel {
 pub type Sound = Vec<SoundTone>;
 
 /// Tone + length in us
+#[derive(Serialize, Deserialize)]
 pub struct SoundTone {
     pub freq: f32,
     pub length_us: u64,
 }
+
+pub struct Level {}

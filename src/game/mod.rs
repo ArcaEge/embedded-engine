@@ -25,7 +25,7 @@ impl GameTrait for Game {
         let spritesheet = Rc::new(Spritesheet::from(spritesheet_initial));
         Self {
             world: worlds::MainWorld::create(spritesheet.clone()),
-            spritesheet: spritesheet,
+            spritesheet,
         }
     }
 

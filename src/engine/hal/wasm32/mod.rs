@@ -181,7 +181,7 @@ impl HAL {
     }
 
     pub fn set_sound_state(&mut self, state: bool) {
-        let _ = match state {
+        match state {
             true => self.gain_node.gain().set_value(0.1),
             false => self.gain_node.gain().set_value(0.0),
         };
