@@ -1,10 +1,10 @@
-use core::fmt::Error;
-
+use super::collisions::CollisionTypes;
 use crate::engine::{
     EngineInteractionLayer, Point, PreciseOffset, PrecisePoint, Sprite, Spritesheet,
     alloc::{Box, Rc, Vec},
     sound_player::SoundPlayer,
 };
+use core::{cell::RefCell, fmt::Error, ops::Range};
 
 /// World = scene
 /// Not a ripoff of Greenfoot Java's system
@@ -84,6 +84,7 @@ pub trait ActorTrait {
     fn tick(
         &mut self,
         _tick_count: u64,
+        _self_index: Option<u32>,
         _world: &mut WorldInteractionLayer,
         _game: &mut GameInteractionLayer,
         _engine: &mut EngineInteractionLayer,
@@ -134,6 +135,71 @@ pub trait ActorTrait {
 
     /// Return the sprite of the Actor
     fn get_sprite(&self) -> Rc<Sprite>;
+
+    /// Return the CollisionType
+    fn get_collision_type(&self) -> Rc<CollisionTypes>;
+
+    /// TODO
+    fn get_colliding_objects(
+        &self,
+        self_index: Option<u32>,
+        world: &mut WorldInteractionLayer,
+    ) -> Vec<Rc<RefCell<Box<dyn ActorTrait>>>> {
+        let mut colliding_actors: Vec<Rc<RefCell<Box<dyn ActorTrait>>>> = Vec::new();
+
+        let collision_type = self.get_collision_type();
+
+        // Do nothing if collision type is None
+        if *collision_type == CollisionTypes::None {
+            return colliding_actors;
+        } else if let CollisionTypes::BoundingBox(
+            this_top_left_collision,
+            this_bottom_right_collision,
+        ) = *collision_type
+        {
+            let this_location = self.get_precise_location();
+
+            let this_top_left = this_location.apply_offset(this_top_left_collision);
+            let this_bottom_right = this_location.apply_offset(this_bottom_right_collision);
+
+            let this_x_range = this_top_left.x..this_bottom_right.x;
+            let this_y_range = this_top_left.y..this_bottom_right.y;
+
+            for (index, actor) in world.actors.iter().enumerate() {
+                if let Some(self_index_unwrapped) = self_index
+                    && self_index_unwrapped == index as u32
+                {
+                    continue;
+                }
+
+                let borrowed_actor = actor.borrow();
+                let inner_actor = borrowed_actor.as_ref();
+
+                match inner_actor.get_collision_type().as_ref() {
+                    CollisionTypes::None => continue,
+                    CollisionTypes::BoundingBox(top_left_collision, bottom_right_collision) => {
+                        let location = inner_actor.get_precise_location();
+                        let top_left = location.apply_offset(*top_left_collision);
+                        let bottom_right = location.apply_offset(*bottom_right_collision);
+
+                        let x_range = top_left.x..bottom_right.x;
+                        let y_range = top_left.y..bottom_right.y;
+
+                        // Actual collision logic
+                        if ranges_overlap(this_x_range.clone(), x_range)
+                            && ranges_overlap(this_y_range.clone(), y_range)
+                        {
+                            colliding_actors.push(actor.clone());
+                        }
+                    }
+                }
+            }
+        }
+
+        colliding_actors
+    }
+
+    // fn is_colliding(&self) {}
 }
 
 /// Gives the Actor a create() function, used for keeping the core ActorTrait dyn compatible.
@@ -149,6 +215,7 @@ pub struct GameInteractionLayer<'a> {
 
 /// Interaction layer used to pass data between the actor and world
 pub struct WorldInteractionLayer<'a> {
+    pub actors: &'a [Rc<RefCell<Box<dyn ActorTrait>>>],
     pub music: &'a mut Vec<SoundPlayer>,
     pub sfx: &'a mut Vec<SoundPlayer>,
     pub current_music: &'a mut Option<usize>,
@@ -208,4 +275,9 @@ pub struct Camera {
     pub current_offset: PreciseOffset,
     pub min_offset: PreciseOffset,
     pub max_offset: PreciseOffset,
+}
+
+/// Returns true if the given ranges overlap
+fn ranges_overlap(a: Range<f32>, b: Range<f32>) -> bool {
+    a.start.max(b.start) <= a.end.min(b.end)
 }

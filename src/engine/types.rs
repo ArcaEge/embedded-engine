@@ -1,7 +1,6 @@
 use super::EngineInteractionLayer;
 use super::alloc::{Rc, Vec};
 use iter_variants::IterVariants;
-use libm::roundf;
 use serde::{Deserialize, Serialize};
 use variant_count::VariantCount;
 
@@ -69,8 +68,9 @@ pub struct PrecisePoint {
 impl From<PrecisePoint> for Point {
     fn from(value: PrecisePoint) -> Self {
         Self {
-            x: roundf(value.x) as i32,
-            y: roundf(value.y) as i32,
+            // Truncate, no rounding
+            x: value.x as i32,
+            y: value.y as i32,
         }
     }
 }
@@ -100,8 +100,14 @@ impl PrecisePoint {
     }
 }
 
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, PartialEq)]
 pub struct PreciseOffset {
+    pub x: f32,
+    pub y: f32,
+}
+
+#[derive(Clone, Copy)]
+pub struct Velocity {
     pub x: f32,
     pub y: f32,
 }

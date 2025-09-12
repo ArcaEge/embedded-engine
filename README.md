@@ -18,12 +18,13 @@ Features (working):
 - 2D camera
   - On-screen display
 - Spritesheet animations
+- Sound from encoded file
+- Collisions
 
 Features (not yet implemented):
 
-- Sound from encoded file
-- Collisions
-- Demo game
+- Level system
+- Proper demo game
 - 3D??
 - Async on the RP2040 side?
 - Loading games from SD card??

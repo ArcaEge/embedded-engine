@@ -1,5 +1,6 @@
-use super::super::world_actor_abstractions::{
-    ActorTrait, GameInteractionLayer, WorldInteractionLayer,
+use super::super::{
+    collisions::CollisionTypes,
+    world_actor_abstractions::{ActorTrait, GameInteractionLayer, WorldInteractionLayer},
 };
 use crate::engine::{
     EngineInteractionLayer, PrecisePoint, Sprite, SpriteAnimation, Spritesheet,
@@ -11,6 +12,7 @@ pub struct StaticActor {
     location: PrecisePoint,
     sprite_animation: SpriteAnimation,
     flipped: bool,
+    collision_type: Rc<CollisionTypes>,
 }
 
 impl StaticActor {
@@ -19,11 +21,13 @@ impl StaticActor {
         spritesheet: Rc<Spritesheet>,
         sprite_vec: Vec<(usize, u64)>,
         flipped: bool,
+        collision_type: CollisionTypes,
     ) -> Box<dyn ActorTrait> {
         Box::new(Self {
             location,
             sprite_animation: SpriteAnimation::new(sprite_vec, spritesheet),
             flipped,
+            collision_type: Rc::new(collision_type),
         })
     }
 }
@@ -32,6 +36,7 @@ impl ActorTrait for StaticActor {
     fn tick(
         &mut self,
         _tick_count: u64,
+        _self_index: Option<u32>,
         _world: &mut WorldInteractionLayer,
         _game: &mut GameInteractionLayer,
         _engine: &mut EngineInteractionLayer,
@@ -49,5 +54,9 @@ impl ActorTrait for StaticActor {
 
     fn is_flipped(&self) -> bool {
         self.flipped
+    }
+
+    fn get_collision_type(&self) -> Rc<CollisionTypes> {
+        self.collision_type.clone()
     }
 }
