@@ -20,6 +20,7 @@ Features (working):
 - Spritesheet animations
 - Sound from encoded file
 - Collisions
+- Changing sprite animations
 
 Features (not yet implemented):
 

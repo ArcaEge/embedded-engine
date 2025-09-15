@@ -123,6 +123,9 @@ pub trait ActorTrait {
     /// Return the precise location of the Actor
     fn get_precise_location(&self) -> PrecisePoint;
 
+    /// Set the precise location of the Actor
+    fn set_precise_location(&mut self, position: PrecisePoint);
+
     /// Returns whether the Actor is part of the on-screen display (i.e. fixed in place even if the world camera moves)
     fn is_osd(&self) -> bool {
         false
@@ -139,11 +142,11 @@ pub trait ActorTrait {
     /// Return the CollisionType
     fn get_collision_type(&self) -> Rc<CollisionTypes>;
 
-    /// TODO
+    /// Returns the colliding objects
     fn get_colliding_objects(
         &self,
         self_index: Option<u32>,
-        world: &mut WorldInteractionLayer,
+        world: &WorldInteractionLayer,
     ) -> Vec<Rc<RefCell<Box<dyn ActorTrait>>>> {
         let mut colliding_actors: Vec<Rc<RefCell<Box<dyn ActorTrait>>>> = Vec::new();
 
@@ -200,6 +203,65 @@ pub trait ActorTrait {
     }
 
     // fn is_colliding(&self) {}
+
+    /// Move to the extent allowed by collisions
+    fn move_with_collisions(
+        &mut self,
+        offset: PreciseOffset,
+        self_index: Option<u32>,
+        world: &WorldInteractionLayer,
+    ) -> (bool, bool) {
+        let mut current_position = self.get_precise_location();
+
+        let target_x = current_position.x + offset.x;
+        let target_y = current_position.y + offset.y;
+
+        let x_increase = offset.x > 0.0;
+        let y_increase = offset.y > 0.0;
+
+        let collided_x = loop {
+            let colliding_objects = self.get_colliding_objects(self_index, world);
+
+            if !colliding_objects.is_empty() {
+                let colliding_object = colliding_objects.get(0).unwrap().borrow();
+
+                let colliding_object_collisions = colliding_object.get_collision_type();
+                let colliding_object_position = colliding_object.get_precise_location();
+
+                match colliding_object_collisions.as_ref() {
+                    CollisionTypes::BoundingBox(top_left, bottom_right) => {
+                        // Get the collisions for this
+                        match self.get_collision_type().as_ref() {
+                            CollisionTypes::BoundingBox(this_top_left, this_bottom_right) => {
+                                current_position.x = if x_increase {
+                                    colliding_object_position.x + top_left.x - this_bottom_right.x
+                                } else {
+                                    colliding_object_position.x + bottom_right.x - this_top_left.x
+                                }
+                            }
+                            CollisionTypes::None => unreachable!(),
+                        }
+                    }
+                    CollisionTypes::None => unreachable!(),
+                }
+                break true;
+            } else if (current_position.x >= target_x && x_increase)
+                || (current_position.x <= target_x && !x_increase)
+            {
+                // Moved without colliding
+                current_position.x = target_x;
+                break false;
+            }
+
+            current_position.x += if x_increase { 0.5 } else { -0.5 };
+        };
+
+        let collided_y = false;
+
+        self.set_precise_location(current_position);
+
+        (collided_x, collided_y)
+    }
 }
 
 /// Gives the Actor a create() function, used for keeping the core ActorTrait dyn compatible.

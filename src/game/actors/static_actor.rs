@@ -48,6 +48,10 @@ impl ActorTrait for StaticActor {
         self.location
     }
 
+    fn set_precise_location(&mut self, position: PrecisePoint) {
+        self.location = position;
+    }
+
     fn get_sprite(&self) -> Rc<Sprite> {
         self.sprite_animation.get_current_sprite()
     }

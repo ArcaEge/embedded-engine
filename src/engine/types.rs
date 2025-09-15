@@ -262,6 +262,11 @@ impl SpriteAnimation {
             }
         }
     }
+
+    pub fn reset(&mut self) {
+        self.ticks_elapsed_in_current_frame = 0;
+        self.current_frame_index = 0;
+    }
 }
 
 /// Pixel of a sprite, Black, White or Transparent
