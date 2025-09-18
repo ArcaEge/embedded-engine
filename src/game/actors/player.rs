@@ -101,25 +101,18 @@ impl ActorTrait for Player {
             self.velocity.y = JUMP_ACCELERATION;
         }
 
-        // Move in x, check collisions
+        // Move in x and y
         let mut offset = PreciseOffset { x: 0.0, y: 0.0 };
         offset.x += self.velocity.x;
+        offset.y += self.velocity.y;
         offset.x += x_offset;
 
         let (x_collided, y_collided) = self.move_with_collisions(offset, self_index, world);
 
         self.velocity.x = if x_collided { 0.0 } else { self.velocity.x };
+        self.velocity.y = if y_collided { 0.0 } else { self.velocity.y };
 
-        // Move in y, check collisions
-        let old_y = self.location.y;
-        self.location.y += self.velocity.y;
-        // self.location.y += y_offset;
-        if !self.get_colliding_objects(self_index, world).is_empty() {
-            self.location.y = old_y;
-
-            // Slight fix for the falling "cushioning" effect?
-            self.velocity.y = 0.0;
-        } else {
+        if !y_collided {
             // Did not collide in the y axis
             self.sprite_animation_state = if self.velocity.y < 0.0 {
                 PlayerAnimationStates::Jumping

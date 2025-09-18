@@ -228,6 +228,7 @@ pub trait ActorTrait {
                 let colliding_object_collisions = colliding_object.get_collision_type();
                 let colliding_object_position = colliding_object.get_precise_location();
 
+                // Sets the current position to just about touch the colliding object
                 match colliding_object_collisions.as_ref() {
                     CollisionTypes::BoundingBox(top_left, bottom_right) => {
                         // Get the collisions for this
@@ -244,21 +245,79 @@ pub trait ActorTrait {
                     }
                     CollisionTypes::None => unreachable!(),
                 }
+
+                self.set_precise_location(current_position);
                 break true;
             } else if (current_position.x >= target_x && x_increase)
                 || (current_position.x <= target_x && !x_increase)
             {
                 // Moved without colliding
                 current_position.x = target_x;
+                self.set_precise_location(current_position);
                 break false;
             }
 
-            current_position.x += if x_increase { 0.5 } else { -0.5 };
+            let diff = target_x - current_position.x;
+            let move_amount = if diff >= 0.5 {
+                0.5
+            } else if diff <= -0.5 {
+                -0.5
+            } else {
+                diff
+            };
+            current_position.x += move_amount;
+            self.set_precise_location(current_position);
         };
 
-        let collided_y = false;
+        let collided_y = loop {
+            let colliding_objects = self.get_colliding_objects(self_index, world);
 
-        self.set_precise_location(current_position);
+            if !colliding_objects.is_empty() {
+                let colliding_object = colliding_objects.get(0).unwrap().borrow();
+
+                let colliding_object_collisions = colliding_object.get_collision_type();
+                let colliding_object_position = colliding_object.get_precise_location();
+
+                // Sets the current position to just about touch the colliding object
+                match colliding_object_collisions.as_ref() {
+                    CollisionTypes::BoundingBox(top_left, bottom_right) => {
+                        // Get the collisions for this
+                        match self.get_collision_type().as_ref() {
+                            CollisionTypes::BoundingBox(this_top_left, this_bottom_right) => {
+                                current_position.y = if y_increase {
+                                    colliding_object_position.y + top_left.y - this_bottom_right.y
+                                } else {
+                                    colliding_object_position.y + bottom_right.y - this_top_left.y
+                                }
+                            }
+                            CollisionTypes::None => unreachable!(),
+                        }
+                    }
+                    CollisionTypes::None => unreachable!(),
+                }
+
+                self.set_precise_location(current_position);
+                break true;
+            } else if (current_position.y >= target_y && y_increase)
+                || (current_position.y <= target_y && !y_increase)
+            {
+                // Moved without colliding
+                current_position.y = target_y;
+                self.set_precise_location(current_position);
+                break false;
+            }
+
+            let diff = target_y - current_position.y;
+            let move_amount = if diff >= 0.5 {
+                0.5
+            } else if diff <= -0.5 {
+                -0.5
+            } else {
+                diff
+            };
+            current_position.y += move_amount;
+            self.set_precise_location(current_position);
+        };
 
         (collided_x, collided_y)
     }
@@ -341,5 +400,5 @@ pub struct Camera {
 
 /// Returns true if the given ranges overlap
 fn ranges_overlap(a: Range<f32>, b: Range<f32>) -> bool {
-    a.start.max(b.start) <= a.end.min(b.end)
+    a.start.max(b.start) < a.end.min(b.end)
 }
