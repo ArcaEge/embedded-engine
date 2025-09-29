@@ -1,5 +1,6 @@
 mod actors;
 pub mod collisions;
+pub mod levels;
 mod sounds;
 mod sprites;
 pub mod world_actor_abstractions;

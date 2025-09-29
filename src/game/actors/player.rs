@@ -47,7 +47,7 @@ impl Player {
             velocity: Velocity { x: 0.0, y: 0.0 },
             collision_type: Rc::new(CollisionTypes::BoundingBox(
                 PreciseOffset { x: 0.0, y: 0.0 },
-                PreciseOffset { x: 8.0, y: 8.0 },
+                PreciseOffset { x: 8.0, y: 9.0 },
             )),
             is_flipped: false,
         }

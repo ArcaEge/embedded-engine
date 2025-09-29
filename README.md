@@ -24,6 +24,7 @@ Features (working):
 
 Features (not yet implemented):
 
+- Fonts
 - Level system
 - Proper demo game
 - 3D??

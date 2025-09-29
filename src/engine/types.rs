@@ -287,5 +287,3 @@ pub struct SoundTone {
     pub freq: f32,
     pub length_us: u64,
 }
-
-pub struct Level {}
